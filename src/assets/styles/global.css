@@ -49,3 +49,13 @@ input::selection, .cell *::selection, .cell::selection {
     border-radius: 10px;
     background-color: #FF6501;
 }
+
+.el-main.main {
+    display: flex;
+    flex-direction: column;
+    padding: 5px;
+    width: 100%;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+}
