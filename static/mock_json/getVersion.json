@@ -1,0 +1,114 @@
+{
+  "data": {
+    "total": 10,
+    "draw": "1",
+    "list": [
+      {
+        "content": "21标题",
+        "createTime": "2017-12-14 17:20:17",
+        "module": "all",
+        "title": "21标题",
+        "updateTime": "2017-12-14 17:20:17",
+        "branchNum": 0,
+        "openFlag": 1,
+        "versionNum": 21
+      },
+      {
+        "content": "31标题",
+        "createTime": "2017-12-14 17:20:55",
+        "module": "app",
+        "title": "31标题",
+        "updateTime": "2017-12-14 17:20:55",
+        "branchNum": 0,
+        "openFlag": 1,
+        "versionNum": 31
+      },
+      {
+        "content": "31标题31",
+        "createTime": "2017-12-14 17:21:14",
+        "module": "app",
+        "title": "31标题31",
+        "updateTime": "2017-12-14 17:21:57",
+        "userTagId": "1513232014063",
+        "branchNum": 1,
+        "openFlag": 0,
+        "versionNum": 31
+      },
+      {
+        "content": "xinyongka",
+        "createTime": "2018-01-29 09:26:12",
+        "module": "app",
+        "title": "xinyongka",
+        "updateTime": "2018-01-29 09:26:12",
+        "branchNum": 0,
+        "openFlag": 1,
+        "versionNum": 1200
+      },
+      {
+        "content": "xinyongka",
+        "createTime": "2018-01-29 09:27:07",
+        "module": "app",
+        "title": "xinyongka",
+        "updateTime": "2018-01-29 09:59:37",
+        "branchNum": 2,
+        "openFlag": 2,
+        "versionNum": 1200
+      },
+      {
+        "content": "螃蟹",
+        "createTime": "2017-12-14 14:15:06",
+        "module": "all",
+        "title": "首版本",
+        "updateTime": "2017-12-14 14:15:06",
+        "branchNum": 0,
+        "openFlag": 1,
+        "versionNum": 11
+      },
+      {
+        "content": "沙滩",
+        "createTime": "2017-12-14 14:15:45",
+        "module": "all",
+        "title": "11分支",
+        "updateTime": "2017-12-14 14:16:12",
+        "userTagId": "1513231966384",
+        "branchNum": 1,
+        "openFlag": 0,
+        "versionNum": 11
+      },
+      {
+        "content": "细沙",
+        "createTime": "2017-12-14 14:16:48",
+        "module": "all",
+        "title": "二版本",
+        "updateTime": "2017-12-14 14:16:48",
+        "branchNum": 0,
+        "openFlag": 1,
+        "versionNum": 12
+      },
+      {
+        "content": "海水",
+        "createTime": "2017-12-14 14:17:20",
+        "module": "all",
+        "title": "12分支",
+        "updateTime": "2017-12-14 14:18:23",
+        "userTagId": "1513231966384",
+        "branchNum": 1,
+        "openFlag": 2,
+        "versionNum": 12
+      },
+      {
+        "content": "酸奶",
+        "createTime": "2017-12-14 14:21:57",
+        "module": "all",
+        "title": "12分值",
+        "updateTime": "2017-12-14 14:22:18",
+        "userTagId": "1513232014063",
+        "branchNum": 2,
+        "openFlag": 1,
+        "versionNum": 12
+      }
+    ]
+  },
+  "err": "0",
+  "msg": "成功"
+}

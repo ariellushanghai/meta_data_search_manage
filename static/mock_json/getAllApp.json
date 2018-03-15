@@ -1,0 +1,83 @@
+{
+  "data": {
+    "total": 286,
+    "list": [
+      {
+        "updateBy": "PANDEQIANG893",
+        "clientSystem": "99",
+        "weight": 0,
+        "marketTerm": "market0",
+        "status": "1",
+        "parent": "账户服务|账户余额|",
+        "androidLowVersion": "_all_",
+        "actionType": "webapp",
+        "url": "/accountBalance/pages/accountQuery.html",
+        "updateDate": "2018-01-26 15:02:45",
+        "id": "05d3dbd3906049c59a90202f9239bce5",
+        "level": "2",
+        "name": "账户余额",
+        "iosLowVersion": "_all_",
+        "fatherId": "449F947461F70022E0530A0EDA0FB828",
+        "weightWord": "王杰,李振华,万广坤,孙中宇",
+        "wordList": [
+          {
+            "word": "10234567891023456789",
+            "weight": 0,
+            "startTime": "20170901",
+            "endTime": "20180302"
+          },
+          {
+            "word": "10234567891023456789",
+            "weight": 0,
+            "startTime": "20170901",
+            "endTime": "20180302"
+          },
+          {
+            "word": "10234567891023456789",
+            "weight": 0,
+            "startTime": "20170901",
+            "endTime": "20180302"
+          }
+        ]
+      },
+      {
+        "updateBy": "PANDEQIANG893",
+        "clientSystem": "99",
+        "weight": 0,
+        "status": "1",
+        "parent": "工具/其他服务|大额取现预约|",
+        "androidLowVersion": "_all_",
+        "actionType": "webapp",
+        "url": "https://bank-static-stg.pingan.com.cn/iclient-igc/iweb/html/largeAmount/largeAmountOne.html",
+        "updateDate": "2018-01-25 18:45:12",
+        "id": "06ac3ef582e744609b0d165c28c5286d",
+        "level": "2",
+        "name": "大额取现预约",
+        "iosLowVersion": "_all_",
+        "fatherId": "449F947461FA0022E0530A0EDA0FB828",
+        "wordList": [
+          {
+            "word": "10234567891023456789",
+            "weight": 1,
+            "startTime": "20170901",
+            "endTime": "20180302"
+          },
+          {
+            "word": "10234567891023456789",
+            "weight": 0,
+            "startTime": "20170901",
+            "endTime": "20180302"
+          },
+          {
+            "word": "10234567891023456789",
+            "weight": 1,
+            "startTime": "20170901",
+            "endTime": "20180302"
+          }
+        ]
+      }
+    ]
+  },
+  "err": "0",
+  "msg": "成功"
+}

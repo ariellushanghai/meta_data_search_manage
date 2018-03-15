@@ -1,0 +1,72 @@
+{
+  "data": {
+    "total": 4,
+    "list": [
+      {
+        "module": "all",
+        "title": "21标题",
+        "branchNum": 0,
+        "subList": [],
+        "openFlag": 1,
+        "versionNum": 21
+      },
+      {
+        "module": "all",
+        "title": "首版本",
+        "branchNum": 0,
+        "subList": [
+          {
+            "module": "all",
+            "title": "11分支",
+            "branchNum": 1,
+            "openFlag": 0,
+            "versionNum": 11
+          }
+        ],
+        "openFlag": 1,
+        "versionNum": 11
+      },
+      {
+        "module": "all",
+        "title": "二版本",
+        "branchNum": 0,
+        "subList": [
+          {
+            "module": "all",
+            "title": "12分支",
+            "branchNum": 1,
+            "openFlag": 2,
+            "versionNum": 12
+          },
+          {
+            "module": "all",
+            "title": "12分值",
+            "branchNum": 2,
+            "openFlag": 1,
+            "versionNum": 12
+          }
+        ],
+        "openFlag": 1,
+        "versionNum": 12
+      },
+      {
+        "module": "all",
+        "title": "1000",
+        "branchNum": 0,
+        "subList": [
+          {
+            "module": "all",
+            "title": "11333",
+            "branchNum": 1,
+            "openFlag": 2,
+            "versionNum": 1000
+          }
+        ],
+        "openFlag": 1,
+        "versionNum": 1000
+      }
+    ]
+  },
+  "err": "0",
+  "msg": "成功"
+}

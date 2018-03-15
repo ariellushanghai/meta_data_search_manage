@@ -1,0 +1,22 @@
+{
+  "parser": "babel-eslint",
+  "plugins": [
+    "html",
+    "flowtype-errors"
+  ],
+  "extends": [
+    "vue",
+    "eslint:recommended"
+  ],
+  "env": {
+    "browser": true
+  },
+  "rules": {
+    "flowtype-errors/show-errors": 2,
+    "no-console": 0,
+    "no-const-assign": 2,
+    "no-implicit-globals": 2,
+    "no-invalid-this": 2,
+    "no-shadow": 2
+  }
+}

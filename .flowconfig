@@ -1,0 +1,13 @@
+[ignore]
+    .*/node_modules/.*
+    .*/config/.*
+    .*/test/.*
+[include]
+
+[libs]
+
+[lints]
+
+[options]
+    emoji=true
+[strict]
