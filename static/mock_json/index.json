@@ -1,0 +1,70 @@
+{
+  "data": {
+    "TABLETOTAL": 0,
+    "dbList": {
+      "pageNum": 1,
+      "pageSize": 3,
+      "size": 3,
+      "startRow": 0,
+      "endRow": 2,
+      "total": 3,
+      "pages": 1,
+      "list": [
+        {
+          "id": "1",
+          "name": "Raw",
+          "descr": null,
+          "tableCnt": null,
+          "dbAdmin": "raw_admin",
+          "sasPermissionAdmin": "Hid",
+          "creator": "admin",
+          "createTime": 1520352000000,
+          "modifier": null,
+          "modifyTime": 1521160397929
+        },
+        {
+          "id": "2",
+          "name": "fdm",
+          "descr": null,
+          "tableCnt": null,
+          "dbAdmin": "fdm_admin",
+          "sasPermissionAdmin": "kds",
+          "creator": "admin",
+          "createTime": 1520352000000,
+          "modifier": null,
+          "modifyTime": 1521160397929
+        },
+        {
+          "id": "3",
+          "name": "riskdw",
+          "descr": null,
+          "tableCnt": null,
+          "dbAdmin": "riskdw_admin",
+          "sasPermissionAdmin": "fdaf",
+          "creator": "admin",
+          "createTime": 1520352000000,
+          "modifier": null,
+          "modifyTime": 1521160397929
+        }
+      ],
+      "prePage": 0,
+      "nextPage": 0,
+      "isFirstPage": true,
+      "isLastPage": true,
+      "hasPreviousPage": false,
+      "hasNextPage": false,
+      "navigatePages": 8,
+      "navigatepageNums": [
+        1
+      ],
+      "navigateFirstPage": 1,
+      "navigateLastPage": 1,
+      "firstPage": 1,
+      "lastPage": 1
+    },
+    "DBTOTAL": 3
+  },
+  "errcode": "0",
+  "errmsg": null,
+  "tipmsg": null
+}

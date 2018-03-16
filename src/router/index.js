@@ -4,6 +4,7 @@ import store from '@/store/'
 // 元数据管理模块
 const Meta = r => require(['@/pages/Meta/Meta.vue'], r); // 容器
 const MetaIndex = r => require(['@/pages/Meta/Index.vue'], r); // 未搜索时的首页
+const BlankSearchResult = r => require(['@/pages/Meta/BlankSearchResult.vue'], r); // 搜索未匹配
 // 辅助分析模块
 const Assist = r => require(['@/pages/Assist/Assist.vue'], r);
 // 事件管理模块
@@ -26,6 +27,11 @@ const router = new Router({
         {
           path: '',
           component: MetaIndex
+        },
+        {
+          name: 'blanksearchresult',
+          path: 'search/blank/:db',
+          component: BlankSearchResult
         }
       ]
     },

@@ -1,11 +1,6 @@
 <template lang="pug">
     el-container
         el-main.main
-            .search-input
-                h1 搜索您要找的元数据
-                el-input#input_search(placeholder='请输入内容' v-model.trim='input_search' size='medium', :clearable='true', :disabled='isSearching')
-                    el-button(slot='append' type='primary' icon='el-icon-search' size='medium', :loading='isSearching', @click='search')
-                        | 搜索
             .tabbed-table
                 el-tabs(v-model='activeTabName', @tab-click='handleTabClick' type='border-card')
                     el-tab-pane(label='Hive' name='hive')
@@ -22,10 +17,6 @@
                             el-table-column(prop='modifyTime', label="更新时间", min-width="150")
                     el-tab-pane(label='标签系统(暂无)' name='labelsys', :disabled="true") 标签系统
                     el-tab-pane(label='TimeLine(暂无)' name='timeline', :disabled="true") TimeLine
-
-            .pagination
-                el-pagination(@size-change="handlePageSizeChange", @current-change="handleCurrentPageChange", :current-page="pageNum", :total="total", :page-size="10", :page-sizes="[10, 20, 50, 100]", layout="total, sizes, prev, pager, next, jumper", :background="true", :small="true")
-
 </template>
 
 <script>
@@ -43,17 +34,18 @@
       ElMain,
       ElContainer
     },
-    name: 'MetaIndex',
+    name: 'BlankSearchResult',
     metaInfo: {
-      titleTemplate: '%s-元数据管理'
+      titleTemplate: '%s-无匹配搜索结果'
     },
     data() {
       return {
+        current_db_id: '',
         input_search: '',
         isSearching: false,
         activeTabName: 'hive',
-        pageNum: 1,
-        total: 10, // 表格总条目数
+        page: 1,
+        pageSize: 10,
         table_data: []
       }
     },
@@ -75,18 +67,22 @@
         });
       }
     },
+    watch: {
+      '$route'(to, from) {
+        console.log(`$route changed: to : `, to, `from:`, from);
+        if (to.params.db !== from.params.db) {
+          return this.fetchIndexData();
+        }
+      }
+    },
     mounted() {
-      console.log(`MetaIndex.vue mounted()`);
-      document.querySelector('#input_search').focus();
+      console.log(`无匹配搜索结果 mounted() this.$route.params:`, this.$route.params);
+      this.current_db_id = this.$route.params;
       this.fetchIndexData();
     },
     methods: {
       search() {
-        if (this.input_search === '') {
-          return this.$router.push({name: 'blanksearchresult', params: {db: '0'}});
-        } else {
-          return false;
-        }
+
       },
       fetchIndexData() {
         let loading = this.$loading({
@@ -96,12 +92,12 @@
           background: 'rgba(255,255,255,0.3)'
         });
         return API.getIndexData({
-          pageNum: Number(this.pageNum),
-          total: Number(this.page_size)
+          page: Number(this.page),
+          pageSize: Number(this.page_size)
         }).then(res => {
           console.log(`res: `, res);
-          this.table_data = res.dbList.list;
-          // this.total = Number(res.total);
+          this.table_data = res.dbList;
+          // this.page_total = Number(res.total);
           loading.close();
         }, err => {
           console.error(`err: `, err);
@@ -116,16 +112,6 @@
       },
       handleTabClick(tab, event) {
         console.log(tab, event);
-      },
-      handleCurrentPageChange(val) {
-        console.log(`当前页: ${val}`);
-        // this.pageNum = Number(val);
-        // return this.fetchData();
-      },
-      handlePageSizeChange(val) {
-        console.log(`每页 ${val} 条`);
-        // this.page_size = Number(val);
-        // return this.fetchData();
       }
     }
   }
@@ -161,23 +147,10 @@
 
     .tabbed-table
         /*flex-grow 1*/
-        height calc(100% - 150px)
+        height 100%
         /deep/ .el-tabs
             height 100%
             max-height 100%
             overflow hidden
-
-    .pagination
-        display flex
-        justify-content center
-        flex none
-        height 50px
-
-    .pagination /deep/ .el-pagination
-        display flex
-        justify-content center
-        align-items center
-        padding 5px
-        padding-bottom 0
 
 </style>
