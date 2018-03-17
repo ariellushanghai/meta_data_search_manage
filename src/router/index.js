@@ -30,7 +30,7 @@ const router = new Router({
         },
         {
           name: 'blanksearchresult',
-          path: 'search/blank/:db',
+          path: 'blank_search/:db',
           component: BlankSearchResult
         }
       ]

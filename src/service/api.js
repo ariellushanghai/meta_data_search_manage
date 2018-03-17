@@ -1,15 +1,17 @@
 import network from '@/service/network'
 
 export default {
-  // 获取菜单
-  // getMenus() {
-  //   // return network.get('/getUserMenu.json');
-  //   return network.get('/user/getMgrMenu.do');
-  // },
-  // 获取 关键词管理-配置功能服务
+  // 获取 首页数据
   getIndexData(req) {
     return network.get('/index.json');
-    // return network.post('/module/getAllApp.do', undefined, {params: req});
+  },
+  // 获取Hive DB列表
+  getHiveDBList() {
+    return network.get('/hiveDbList.json');
+  },
+  // 获取DB对应表格列表
+  fetchTablesByDbId() {
+    return network.get('/fetchTablesByDbId.json');
   }
 
 }

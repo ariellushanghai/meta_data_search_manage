@@ -28,7 +28,7 @@ textarea {
 
 input::selection, .cell *::selection, .cell::selection {
     color: #fff;
-    background-color: #FF6501;
+    background-color: #FF6600;
 }
 
 :lang(zh-CN) {
@@ -40,14 +40,14 @@ input::selection, .cell *::selection, .cell::selection {
 }
 
 ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+    width: 5px;
+    height: 5px;
     background-color: rgba(255, 255, 255, 0);
 }
 
 ::-webkit-scrollbar-thumb {
     border-radius: 10px;
-    background-color: #FF6501;
+    background-color: #FF6600;
 }
 
 .el-main.main {

@@ -9,7 +9,7 @@
 
         <el-col :sm="15" :md="15" :lg="16" :xl="16">
 
-            <el-menu mode="horizontal" background-color="#333644" text-color="#fff" active-text-color="#FF6501"
+            <el-menu mode="horizontal" background-color="#333644" text-color="#fff" active-text-color="#FF6600"
                      :default-active="defaultActive" :router="true">
                 <el-menu-item v-for="menu in menuItems" :index="'/' + menu.route" :key="menu.route"
                               :disabled="menu.disabled">
@@ -50,9 +50,9 @@
     },
     computed: {
       defaultActive() {
-        // if (/^\/project\//.exec(this.$route.path)) {
-        //   return '/project'
-        // }
+        if (/^\/meta\//.exec(this.$route.path)) {
+          return '/meta'
+        }
         return this.$route.path;
       },
       menuItems() {
@@ -119,7 +119,7 @@
 
 <style lang="stylus" scoped>
     header-height = 60px
-    ping_an-orange = #FF6501
+    ping_an-orange = #FF6600
 
     .invisiable
         visibility hidden

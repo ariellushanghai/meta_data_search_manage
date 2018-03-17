@@ -1,0 +1,162 @@
+{
+  "data": {
+    "DBTOTAL": 3,
+    "dbList": [
+      {
+        "id": "1",
+        "name": "riskdw_examples_0_INSERT OVERWRITE TABLE 0",
+        "descr": "描述信息",
+        "tableCnt": null,
+        "dbAdmin": "riskdw_admin",
+        "sasPermissionAdmin": "fdaf",
+        "creator": "admin",
+        "createTime": 1520352000000,
+        "modifier": "修改人",
+        "modifyTime": 1521257888175
+      },
+      {
+        "id": "2",
+        "name": "riskdw_hive-metastore_0",
+        "descr": "描述信息",
+        "tableCnt": null,
+        "dbAdmin": "riskdw_admin",
+        "sasPermissionAdmin": "fdaf",
+        "creator": "admin",
+        "createTime": 1520352000000,
+        "modifier": "修改人",
+        "modifyTime": 1521257888175
+      },
+      {
+        "id": "3",
+        "name": "riskdw_3",
+        "descr": "描述信息",
+        "tableCnt": null,
+        "dbAdmin": "riskdw_admin",
+        "sasPermissionAdmin": "fdaf",
+        "creator": "admin",
+        "createTime": 1520352000000,
+        "modifier": "修改人",
+        "modifyTime": 1521257888175
+      },
+      {
+        "id": "4",
+        "name": "riskdw_4",
+        "descr": "描述信息",
+        "tableCnt": null,
+        "dbAdmin": "riskdw_admin",
+        "sasPermissionAdmin": "fdaf",
+        "creator": "admin",
+        "createTime": 1520352000000,
+        "modifier": "修改人",
+        "modifyTime": 1521257888175
+      },
+      {
+        "id": "4",
+        "name": "riskdw_4",
+        "descr": "描述信息",
+        "tableCnt": null,
+        "dbAdmin": "riskdw_admin",
+        "sasPermissionAdmin": "fdaf",
+        "creator": "admin",
+        "createTime": 1520352000000,
+        "modifier": "修改人",
+        "modifyTime": 1521257888175
+      },
+      {
+        "id": "4",
+        "name": "riskdw_4",
+        "descr": "描述信息",
+        "tableCnt": null,
+        "dbAdmin": "riskdw_admin",
+        "sasPermissionAdmin": "fdaf",
+        "creator": "admin",
+        "createTime": 1520352000000,
+        "modifier": "修改人",
+        "modifyTime": 1521257888175
+      },
+      {
+        "id": "4",
+        "name": "riskdw_4",
+        "descr": "描述信息",
+        "tableCnt": null,
+        "dbAdmin": "riskdw_admin",
+        "sasPermissionAdmin": "fdaf",
+        "creator": "admin",
+        "createTime": 1520352000000,
+        "modifier": "修改人",
+        "modifyTime": 1521257888175
+      },
+      {
+        "id": "4",
+        "name": "riskdw_4",
+        "descr": "描述信息",
+        "tableCnt": null,
+        "dbAdmin": "riskdw_admin",
+        "sasPermissionAdmin": "fdaf",
+        "creator": "admin",
+        "createTime": 1520352000000,
+        "modifier": "修改人",
+        "modifyTime": 1521257888175
+      }
+    ],
+    "TABLETOTAL": 54,
+    "tableInfo": {
+      "id": "1",
+      "dbId": "1",
+      "tableName": "testTable",
+      "tags": "测试,表",
+      "updateWay": "未知",
+      "tableCreateTime": 1519833600000,
+      "tableUpdateTime": 1519833600000,
+      "businessOwner": "dsf",
+      "devOwner": "sdf",
+      "dataOwner": "ere",
+      "descr": "ersf",
+      "creator": "sese",
+      "createTime": 1519833600000,
+      "modifier": "awdw",
+      "modifyTime": 1519833600000
+    },
+    "tableList": [
+      {
+        "id": "1",
+        "dbId": "1",
+        "tableName": "testTable",
+        "tags": "测试表",
+        "updateWay": "未知",
+        "tableCreateTime": 1519833600000,
+        "tableUpdateTime": 1519833600000,
+        "businessOwner": "dsf",
+        "devOwner": "sdf",
+        "dataOwner": "ere",
+        "descr": "ersf",
+        "creator": "sese",
+        "createTime": 1519833600000,
+        "modifier": "awdw",
+        "modifyTime": 1519833600000
+      }
+    ],
+    "fieldList": [
+      {
+        "id": "1",
+        "tableId": "1",
+        "fieldName": "dt",
+        "isPrimarykey": "0",
+        "fieldType": "文本",
+        "statisticsCaliber": null,
+        "isSensitiveInfo": "0",
+        "isAllowNull": "1",
+        "fieldCreateTime": 1519833600000,
+        "fieldUpdateTime": 1519833600000,
+        "codeValueType": null,
+        "creator": null,
+        "createTime": null,
+        "modifier": "修改人",
+        "modifyTime": 1521257888175
+      }
+    ]
+  },
+  "errcode": 0,
+  "errmsg": null,
+  "tipmsg": null
+}
