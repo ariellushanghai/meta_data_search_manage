@@ -165,6 +165,8 @@
     .tabs-container
         /*flex-grow 1*/
         height 100%
+        /deep/ .el-tabs__item
+            user-select none
 
         /deep/ .el-tabs
             width 100%

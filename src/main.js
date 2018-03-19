@@ -11,6 +11,7 @@ import 'normalize.css'
 import '@/assets/styles/global.css'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
+import LightTimeline from 'vue-light-timeline';
 
 import App from './App'
 
@@ -19,6 +20,8 @@ Vue.use(Router)
 Vue.use(ElementUI)
 Vue.use(Meta)
 Vue.use(filters)
+Vue.use(LightTimeline)
+
 Vue.config.productionTip = false;
 
 /* eslint-disable no-new */
@@ -27,5 +30,5 @@ new Vue({
   store,
   router,
   template: '<App/>',
-  components: { App }
+  components: {App}
 })
