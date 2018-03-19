@@ -73,23 +73,23 @@
         });
       },
       handleDbListCurrentRowChange(val) {
-        console.log(`handleDbListCurrentRowChange() id: => `, val.id);
+        console.log(`handleDbListCurrentRowChange() val: => `, val);
         if (this.isLoadingTableList) {
           return false;
         }
-        return this.fetchTablesByDbId(val.id);
+        return this.getHiveDbById(val.id);
       },
       handleTableListCurrentRowChange(val) {
-        console.log(`handleTableListCurrentRowChange() id: => `, val.id);
-        // if (this.isLoadingTableList) {
-        //   return false;
-        // }
-        // return this.fetchTablesByDbId(val.id);
+        console.log(`selectTable() val: => `, val);
+        if (this.isLoadingTableList) {
+          return false;
+        }
+        return this.$emit('selectTable', val.id);
       },
-      fetchTablesByDbId(db_id) {
-        console.log('fetchTablesByDbId()');
+      getHiveDbById(db_id) {
+        console.log('getHiveDbById()');
         this.isLoadingTableList = true;
-        return API.fetchTablesByDbId({db_id: db_id}).then(res => {
+        return API.getHiveDbById({db_id: db_id}).then(res => {
           this.isLoadingTableList = false;
           this.current_table_list = res.tableList;
         }, err => {
@@ -130,6 +130,14 @@
 
             td:hover
                 cursor pointer
+
+            .el-table__body tr.current-row > td
+                background-color #f60
+
+                .cell span {
+                    color white
+                    font-weight bold
+                }
 
             .cell
                 line-height 20px

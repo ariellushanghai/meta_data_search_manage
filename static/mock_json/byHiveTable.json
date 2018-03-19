@@ -1,0 +1,44 @@
+{
+  "data": {
+    "tableInfo": {
+      "id": "1",
+      "dbId": "1",
+      "dbName": "假数据库名字假数据库名字假数据库名字",
+      "tableName": "testTable",
+      "tags": "测试,表,tagtagtag_0,tag_1,tag_2,tag_3,tag_4,tag_5",
+      "updateWay": "未知",
+      "tableCreateTime": 1519833600000,
+      "tableUpdateTime": 1519833600000,
+      "businessOwner": "dsf",
+      "devOwner": "sdf",
+      "dataOwner": "ere",
+      "descr": "ersf",
+      "creator": "sese",
+      "createTime": 1519833600000,
+      "modifier": "awdw",
+      "modifyTime": 1519833600000
+    },
+    "fieldList": [
+      {
+        "id": "1",
+        "tableId": "1",
+        "fieldName": "dt",
+        "isPrimarykey": "0",
+        "fieldType": "文本",
+        "statisticsCaliber": null,
+        "isSensitiveInfo": "0",
+        "isAllowNull": "1",
+        "fieldCreateTime": 1519833600000,
+        "fieldUpdateTime": 1519833600000,
+        "codeValueType": null,
+        "creator": null,
+        "createTime": null,
+        "modifier": null,
+        "modifyTime": null
+      }
+    ]
+  },
+  "errcode": 0,
+  "errmsg": null,
+  "tipmsg": null
+}

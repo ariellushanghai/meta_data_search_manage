@@ -3,7 +3,7 @@
     "TABLETOTAL": 54,
     "tableList": [
       {
-        "id": "1",
+        "id": 0,
         "dbId": "1",
         "tableName": "测试表000000",
         "tags": "测试表",
@@ -20,7 +20,7 @@
         "modifyTime": 1519833600000
       },
       {
-        "id": "1",
+        "id": 1,
         "dbId": "1",
         "tableName": "测试表1111111",
         "tags": "测试表",
@@ -37,7 +37,7 @@
         "modifyTime": 1519833600000
       },
       {
-        "id": "1",
+        "id": 2,
         "dbId": "1",
         "tableName": "testTable",
         "tags": "测试表",
@@ -54,7 +54,7 @@
         "modifyTime": 1519833600000
       },
       {
-        "id": "1",
+        "id": 3,
         "dbId": "1",
         "tableName": "testTable",
         "tags": "测试表",
@@ -71,7 +71,7 @@
         "modifyTime": 1519833600000
       },
       {
-        "id": "1",
+        "id": 4,
         "dbId": "1",
         "tableName": "testTable",
         "tags": "测试表",
@@ -88,7 +88,7 @@
         "modifyTime": 1519833600000
       },
       {
-        "id": "1",
+        "id": 5,
         "dbId": "1",
         "tableName": "testTable",
         "tags": "测试表",
@@ -105,7 +105,7 @@
         "modifyTime": 1519833600000
       },
       {
-        "id": "1",
+        "id": 6,
         "dbId": "1",
         "tableName": "testTable",
         "tags": "测试表",
@@ -122,7 +122,7 @@
         "modifyTime": 1519833600000
       },
       {
-        "id": "1",
+        "id": 7,
         "dbId": "1",
         "tableName": "testTable",
         "tags": "测试表",
@@ -139,7 +139,7 @@
         "modifyTime": 1519833600000
       },
       {
-        "id": "1",
+        "id": 8,
         "dbId": "1",
         "tableName": "testTable",
         "tags": "测试表",
@@ -156,7 +156,7 @@
         "modifyTime": 1519833600000
       },
       {
-        "id": "1",
+        "id": 9,
         "dbId": "1",
         "tableName": "testTable",
         "tags": "测试表",
@@ -173,7 +173,7 @@
         "modifyTime": 1519833600000
       },
       {
-        "id": "1",
+        "id": 10,
         "dbId": "1",
         "tableName": "testTable",
         "tags": "测试表",
@@ -190,7 +190,7 @@
         "modifyTime": 1519833600000
       },
       {
-        "id": "1",
+        "id": 11,
         "dbId": "1",
         "tableName": "testTable",
         "tags": "测试表",
@@ -207,7 +207,7 @@
         "modifyTime": 1519833600000
       },
       {
-        "id": "1",
+        "id": 12,
         "dbId": "1",
         "tableName": "testTable",
         "tags": "测试表",

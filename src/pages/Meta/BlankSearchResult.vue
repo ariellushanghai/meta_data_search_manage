@@ -5,8 +5,10 @@
                 el-tabs(v-model='activeTabName', @tab-click='handleTabClick' type='border-card')
                     el-tab-pane(label='Hive' name='hive')
                         .hives-and-tables
-                            db-table-tree-menu()
-                        .selected-table
+                            db-table-tree-menu(v-on:selectTable='handleSelectTable')
+                        .selected-table(v-show="selected_table_id !== 0")
+                            table-details(:table_id='selected_table_id')
+
                     el-tab-pane(label='标签系统(暂无)' name='labelsys', :disabled="true") 标签系统
                     el-tab-pane(label='TimeLine(暂无)' name='timeline', :disabled="true") TimeLine
 </template>
@@ -15,6 +17,7 @@
   // @flow
   import API from '@/service/api'
   import DbTableTreeMenu from '@/components/DbTableTreeMenu.vue'
+  import TableDetails from '@/components/TableDetails.vue'
   import ElContainer from "element-ui/packages/container/src/main";
   import ElMain from "element-ui/packages/main/src/main";
   import {map, assign} from 'lodash'
@@ -26,7 +29,8 @@
     components: {
       ElMain,
       ElContainer,
-      DbTableTreeMenu
+      DbTableTreeMenu,
+      TableDetails
     },
     name: 'BlankSearchResult',
     metaInfo: {
@@ -38,9 +42,10 @@
         input_search: '',
         isSearching: false,
         activeTabName: 'hive',
-        page: 1,
+        pageNum: 1,
         pageSize: 10,
-        table_data: []
+        table_data: [],
+        selected_table_id: 0
       }
     },
     computed: {
@@ -100,7 +105,7 @@
           background: 'rgba(255,255,255,0.3)'
         });
         return API.getIndexData({
-          page: Number(this.page),
+          pageNum: Number(this.pageNum),
           pageSize: Number(this.page_size)
         }).then(res => {
           console.log(`res: `, res);
@@ -117,6 +122,10 @@
           });
           // window.onresize();
         });
+      },
+      handleSelectTable(table_id) {
+        console.log(`handleSelectTable(${table_id})`);
+        return this.selected_table_id = Number(table_id);
       },
       handleTabClick(tab, event) {
         console.log(tab, event);

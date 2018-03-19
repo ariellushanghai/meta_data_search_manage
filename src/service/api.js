@@ -7,11 +7,15 @@ export default {
   },
   // 获取Hive DB列表
   getHiveDBList() {
-    return network.get('/hiveDbList.json');
+    return network.get('/hiveList.json');
   },
   // 获取DB对应表格列表
-  fetchTablesByDbId() {
-    return network.get('/fetchTablesByDbId.json');
+  getHiveDbById() {
+    return network.get('/byHiveDb.json');
+  },
+  // 获取表格信息(字段)
+  getTableById(id) {
+    return network.get('/byHiveTable.json');
   }
 
 }
