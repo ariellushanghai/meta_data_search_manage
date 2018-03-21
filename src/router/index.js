@@ -4,6 +4,7 @@ import store from '@/store/'
 // 元数据管理模块
 const Meta = r => require(['@/pages/Meta/Meta.vue'], r); // 容器
 const MetaIndex = r => require(['@/pages/Meta/Index.vue'], r); // 未搜索时的首页
+const SearchResult = r => require(['@/pages/Meta/SearchResult.vue'], r); // 文本搜索
 const BlankSearchResult = r => require(['@/pages/Meta/BlankSearchResult.vue'], r); // 搜索未匹配
 // 辅助分析模块
 const Assist = r => require(['@/pages/Assist/Assist.vue'], r);
@@ -32,6 +33,11 @@ const router = new Router({
           name: 'blanksearchresult',
           path: 'blank_search/:db',
           component: BlankSearchResult
+        },
+        {
+          name: 'searchresult',
+          path: 'search/',
+          component: SearchResult
         }
       ]
     },

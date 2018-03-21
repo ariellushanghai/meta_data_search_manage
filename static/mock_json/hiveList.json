@@ -143,7 +143,7 @@
         "fieldName": "dt",
         "isPrimarykey": "0",
         "fieldType": "文本",
-        "statisticsCaliber": null,
+        "statisticsCalibre": null,
         "isSensitiveInfo": "0",
         "isAllowNull": "1",
         "fieldCreateTime": 1519833600000,
