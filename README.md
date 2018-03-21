@@ -1,6 +1,6 @@
 # meta_data_search_manage
 
-> AI云
+> 平安银行元数据管理
 
 ## Build Setup
 

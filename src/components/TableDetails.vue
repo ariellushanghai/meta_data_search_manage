@@ -66,9 +66,9 @@
                                     | ✓
                                 span.x(v-if="checkOrX(scope.row.isPrimarykey) === '✕'")
                                     | ✕
-                        el-table-column(prop="fieldType", label="字段类型", :sortable="true")
-                        el-table-column(prop="fieldCreateTime", label="创建时间")
-                        el-table-column(prop="fieldUpdateTime", label="更新时间")
+                        el-table-column(prop="fieldType", label="字段类型", :sortable="true", align="center", width='100')
+                        el-table-column(prop="fieldCreateTime", label="创建时间", width="200")
+                        el-table-column(prop="fieldUpdateTime", label="更新时间", width="200")
                         el-table-column(prop="descr", label="字段描述")
                         el-table-column(prop="statisticsCalibre", label="统计口径", :sortable="true")
                         el-table-column(prop="isSensitiveInfo", label="敏感信息", :sortable="true", align="center", width='100')
@@ -194,13 +194,14 @@
         if (isEmpty(this.table_metas)) {
           return [];
         }
-        return map(pick(this.table_metas, ['tableName', 'dbName', 'amount', 'tableCreateTime', 'tableEffectTime', 'tableUpdateTime', 'dataOwner', 'devOwner', 'businessOwner']), (v, k) => {
-          console.log(v, k);
-          return {
-            display_name: this.mapping[k],
-            value: v
-          };
-        });
+        return map(pick(this.table_metas, ['tableName', 'dbName', 'amount', 'tableCreateTime', 'tableEffectTime', 'tableUpdateTime', 'dataOwner', 'devOwner', 'businessOwner']),
+          (v, k) => {
+            console.log(v, k);
+            return {
+              display_name: this.mapping[k],
+              value: v
+            };
+          });
       },
       tableMetaTags() {
         if (this.table_metas.tags && this.table_metas.tags !== '') {
@@ -310,7 +311,7 @@
     .table-metas
         display flex
         width 100%
-        height 150px
+        height 120px
         > div {
             display flex
             height 100%
@@ -326,21 +327,24 @@
         .entry
             display flex
             width 33.333%
-            height 50px
-            line-height 50px
+            height 40px
+            line-height 40px
             border-bottom 1px solid #dcdfe6
 
             .value
-                width 67%
+                width auto
                 overflow hidden
                 text-overflow ellipsis
                 white-space nowrap
                 word-break break-all
                 vertical-align middle
+                font-size 13px
+                color #29292d
 
             .display-name
                 color #1d1d1b
-                width 33%
+                font-size 14px
+                width 100px
                 min-width 85px
                 font-weight bold
 
@@ -371,10 +375,11 @@
             max-height 30px
 
         .tags-title
-            padding 0 5px
-            line-height 50px
-            min-width 85px
+            padding-right 5px
+            line-height 40px
+            width 100px
             color #1d1d1b
+            font-size 14px
             font-weight bold
 
         .el-tag
