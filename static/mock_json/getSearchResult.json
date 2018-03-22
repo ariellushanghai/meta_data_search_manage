@@ -1,0 +1,45 @@
+{
+  "data": {
+    "total": 10,
+    "list": [
+      {
+        "type": "db",
+        "id": 10,
+        "name": "Table_examples_0_INSERT OVERWRITE TABLE 0",
+        "highLightName": "",
+        "descr": "db描述信息",
+        "dbName": "riskdw_examples_0_INSERT OVERWRITE DB 0",
+        "dbId": 10,
+        "tableName": null,
+        "tableId": null,
+        "cnt": 1326
+      },
+      {
+        "type": "table",
+        "id": 101,
+        "name": "Table_examples_0_INSERT OVERWRITE TABLE 0",
+        "highLightName": "",
+        "descr": "table描述信息",
+        "dbName": "riskdw_examples_0_INSERT OVERWRITE DB 0",
+        "dbId": 100,
+        "tableName": "Table_examples_0_INSERT OVERWRITE TABLE 0",
+        "tableId": 101,
+        "cnt": 132
+      },
+      {
+        "type": "field",
+        "id": 1011,
+        "name": "sell_count",
+        "highLightName": "",
+        "descr": "field描述信息",
+        "dbName": "riskdw_examples_0_INSERT OVERWRITE DB 0",
+        "dbId": 100,
+        "tableName": "Table_examples_0_INSERT OVERWRITE TABLE 0",
+        "tableId": 101,
+        "cnt": 1326
+      }
+    ]
+  },
+  "err": "0",
+  "msg": "成功"
+}

@@ -135,33 +135,6 @@
 </script>
 
 <style lang="stylus" scoped>
-    .search-input
-        display flex
-        flex-direction column
-        width 100%
-        height 100px
-
-        h1
-            color #303133
-            font-size 18px
-            line-height 30px
-            height 30px
-            margin 0 auto
-            margin-bottom 5px
-            text-align center
-
-        .el-input
-            width 50%
-            max-width 400px
-            margin 0 auto
-
-            /deep/ .el-button--primary
-                color #fff
-                background-color #409EFF
-                border 1px solid #409EFF
-                border-top-left-radius 0
-                border-bottom-left-radius 0
-
     .tabs-container
         /*flex-grow 1*/
         height 100%

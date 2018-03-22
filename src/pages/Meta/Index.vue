@@ -85,7 +85,13 @@
         if (this.input_search === '') {
           return this.$router.push({name: 'blanksearchresult', params: {db: '0'}});
         } else {
-          return this.$router.push({name: 'searchresult', query: {text: this.input_search}});
+          return this.$router.push({
+            name: 'searchresult',
+            query: {
+              keyword: this.input_search,
+              type: 'all'
+            }
+          });
         }
       },
       fetchIndexData() {

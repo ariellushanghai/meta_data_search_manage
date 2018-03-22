@@ -4,10 +4,8 @@
             .tabs-container
                 el-tabs(v-model='activeTabName', @tab-click='handleTabClick' type='border-card')
                     el-tab-pane(label='Hive' name='hive')
-                        .hives-and-tables
-                            db-table-tree-menu(v-on:selectTable='handleSelectTable')
-                        .selected-table(v-show="selected_table_id !== 0")
-                            table-details(:table_id='selected_table_id')
+                        .search-result-container
+
 
                     el-tab-pane(label='标签系统(暂无)' name='labelsys', :disabled="true") 标签系统
                     el-tab-pane(label='TimeLine(暂无)' name='timeline', :disabled="true") TimeLine
@@ -135,33 +133,6 @@
 </script>
 
 <style lang="stylus" scoped>
-    .search-input
-        display flex
-        flex-direction column
-        width 100%
-        height 100px
-
-        h1
-            color #303133
-            font-size 18px
-            line-height 30px
-            height 30px
-            margin 0 auto
-            margin-bottom 5px
-            text-align center
-
-        .el-input
-            width 50%
-            max-width 400px
-            margin 0 auto
-
-            /deep/ .el-button--primary
-                color #fff
-                background-color #409EFF
-                border 1px solid #409EFF
-                border-top-left-radius 0
-                border-bottom-left-radius 0
-
     .tabs-container
         /*flex-grow 1*/
         height 100%
@@ -186,7 +157,7 @@
             height 100%
             overflow hidden
 
-    .hives-and-tables
+    .search-result-container
         flex-shrink 0
         width 33%
         min-width 500px
