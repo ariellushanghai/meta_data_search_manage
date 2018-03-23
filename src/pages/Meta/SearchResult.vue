@@ -5,7 +5,7 @@
                 el-tabs(v-model='activeTabName', @tab-click='handleTabClick' type='border-card')
                     el-tab-pane(label='Hive' name='hive')
                         .search-result-container
-
+                            search-result-table(:keyword="keyword")
 
                     el-tab-pane(label='标签系统(暂无)' name='labelsys', :disabled="true") 标签系统
                     el-tab-pane(label='TimeLine(暂无)' name='timeline', :disabled="true") TimeLine
@@ -14,6 +14,7 @@
 <script>
   // @flow
   import API from '@/service/api'
+  import SearchResultTable from '@/components/SearchResultTable.vue'
   import DbTableTreeMenu from '@/components/DbTableTreeMenu.vue'
   import TableDetails from '@/components/TableDetails.vue'
   import ElContainer from "element-ui/packages/container/src/main";
@@ -27,6 +28,7 @@
     components: {
       ElMain,
       ElContainer,
+      SearchResultTable,
       DbTableTreeMenu,
       TableDetails
     },
@@ -62,6 +64,9 @@
             )
           })
         });
+      },
+      keyword() {
+        return this.$route.query.keyword;
       }
     },
     watch: {
@@ -79,6 +84,11 @@
     //   }
     //   return next();
     // },
+    created() {
+      if (this.keyword) {
+        this.search();
+      }
+    },
     mounted() {
       console.log(`无匹配搜索结果 mounted() this.$route.params:`, this.$route.params);
       this.current_db_id = this.$route.params;
@@ -86,7 +96,7 @@
     },
     methods: {
       search() {
-
+        console.log(`search(${this.keyword})`);
       },
       fetchHiveDBList() {
         return API.getHiveDBList({}).then(res => {
