@@ -16,6 +16,9 @@ export default {
   // 获取表格信息(字段)
   getTableById(id) {
     return network.get('/byHiveTable.json');
+  },
+  // 获取 搜索结果
+  getSearchResult(req) {
+    return network.get('/getSearchResult.json');
   }
-
 }

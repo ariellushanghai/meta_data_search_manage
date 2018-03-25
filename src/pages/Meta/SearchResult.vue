@@ -38,7 +38,6 @@
     },
     data() {
       return {
-        current_db_id: '',
         input_search: '',
         isSearching: false,
         activeTabName: 'hive',
@@ -49,31 +48,22 @@
       }
     },
     computed: {
-      tableData() {
-        return map(this.table_data, (row) => {
-          return assign(row, {
-            "createTime": format(
-              new Date(row.createTime),
-              'YYYY[年]MMMD[日]Ah[点]mm[分]',
-              {locale: zh_cn}
-            ),
-            "modifyTime": format(
-              new Date(row.modifyTime),
-              'YYYY[年]MMMD[日]Ah[点]mm[分]',
-              {locale: zh_cn}
-            )
-          })
-        });
-      },
       keyword() {
         return this.$route.query.keyword;
+      },
+      type() {
+        return this.$route.query.type;
       }
     },
     watch: {
       '$route'(to, from) {
         console.log(`$route changed: to : `, to, `from:`, from);
-        if (to.params.db !== from.params.db) {
+        if (to.query.keyword !== from.query.keyword) {
           return this.fetchIndexData();
+        } else if (to.query.type !== from.query.type) {
+          return this.fetchIndexData();
+        } else {
+
         }
       }
     },
@@ -90,50 +80,12 @@
       }
     },
     mounted() {
-      console.log(`无匹配搜索结果 mounted() this.$route.params:`, this.$route.params);
+      console.log(`匹配${this.$route.query.keyword}搜索结果 mounted()`);
       this.current_db_id = this.$route.params;
-      this.fetchIndexData();
     },
     methods: {
       search() {
         console.log(`search(${this.keyword})`);
-      },
-      fetchHiveDBList() {
-        return API.getHiveDBList({}).then(res => {
-          console.log(`getHiveDBList res: `, res);
-        }, err => {
-          console.error(`err: `, err);
-        });
-      },
-      fetchIndexData() {
-        let loading = this.$loading({
-          target: '.tabs-container',
-          lock: true,
-          text: '正在获取数据。。。',
-          background: 'rgba(255,255,255,0.3)'
-        });
-        return API.getIndexData({
-          pageNum: Number(this.pageNum),
-          pageSize: Number(this.page_size)
-        }).then(res => {
-          console.log(`res: `, res);
-          this.table_data = res.dbList;
-          // this.page_total = Number(res.total);
-          loading.close();
-        }, err => {
-          console.error(`err: `, err);
-          loading.close();
-          this.$notify({
-            message: `${err.errmsg} : ${err.tipmsg}`,
-            type: 'error',
-            duration: 0
-          });
-          // window.onresize();
-        });
-      },
-      handleSelectTable(table_id) {
-        console.log(`handleSelectTable(${table_id})`);
-        return this.selected_table_id = Number(table_id);
       },
       handleTabClick(tab, event) {
         console.log(tab, event);
@@ -172,7 +124,7 @@
         width 33%
         min-width 500px
         max-width 600px
-        padding 5px
+        padding 0
 
     .selected-table
         flex-grow 1

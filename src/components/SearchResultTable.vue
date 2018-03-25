@@ -1,46 +1,59 @@
 <template lang="pug">
     .search-result-table
-        .dbs
-            el-table(:data='db_list', @current-change='handleDbListCurrentRowChange', :highlight-current-row='true', :show-header='false', size='mini')
-                el-table-column(:show-overflow-tooltip='true')
-                    template(slot-scope='scope')
-                        img(:src='icon_db')
-                        span(style='font-size: 14px;') {{scope.row.name}}
+        .tabs
+            el-tabs(v-model='active_filter', @tab-click="handleActiveFilterChange")
+                el-tab-pane(name='all')
+                    div(slot='label')
+                        img(:src="icon_all")
+                        span 全部
+                    result-item(:list='raw_search_result')
 
-        .tables
-            .text-filter
-                el-input(placeholder='过滤表格名', v-model='text_filter_for_tables', :fit='true', size='mini')
-                    img(slot='prefix')
-            .list
-                el-table(:data='currentTableList', @current-change='handleTableListCurrentRowChange', :highlight-current-row='true', :show-header='false', size='mini')
-                    el-table-column(:show-overflow-tooltip='true')
-                        template(slot-scope='scope')
-                            img(:src='icon_table')
-                            span(style='font-size: 14px;') {{scope.row.tableName}}
+                el-tab-pane(name='db')
+                    div(slot='label')
+                        img(:src="icon_db")
+                        span 库
+                    result-item(:list='raw_search_result')
 
+                el-tab-pane(name='table')
+                    div(slot='label')
+                        img(:src="icon_table")
+                        span 表
+                    result-item(:list='raw_search_result')
 
+                el-tab-pane(name='field')
+                    div(slot='label')
+                        img(:src="icon_field")
+                        span 字段
+                    result-item(:list='raw_search_result')
+
+        .pagination-container
+            el-pagination(@current-change="handleCurrentPageChange", :current-page.sync="current_page", :page-size="10", layout="total, prev, pager, next", :total="1000", :background="true", :small='true')
 </template>
 
 <script>
   import API from '@/service/api'
+  import icon_all from '@/assets/images/icon_all.png'
   import icon_db from '@/assets/images/icon_db.png'
   import icon_table from '@/assets/images/icon_table.png'
-  import icon_arrow_forward from '@/assets/images/ic_arrow_forward_black_48dp.png'
-  import {filter, debounce} from 'lodash'
+  import icon_field from '@/assets/images/icon_field.png'
+  import {isEmpty, filter} from 'lodash'
+  import ResultItem from '@/components/ResultItem.vue'
+  import ElTabPane from "element-ui/packages/tabs/src/tab-pane";
 
   export default {
-    name: "SearchResultTable",
+    components: {ResultItem, ElTabPane},
+    name: "ResultItemTable",
     props: ['keyword'],
     data() {
       return {
+        icon_all,
         icon_db,
         icon_table,
-        icon_arrow_forward,
-        isLoadingDbList: false,
-        isLoadingTableList: false,
-        db_list: [],
-        current_table_list: [],
-        text_filter_for_tables: ''
+        icon_field,
+        active_filter: 'all',
+        current_page: 1,
+        page_total: 0,
+        raw_search_result: []
       };
     },
     computed: {
@@ -49,125 +62,98 @@
       }
     },
     mounted() {
-      this.fetchHiveDbList();
-
+      console.log(`ResultItemTable: 'keyword': ${this.keyword}`);
+      this.getResultItem();
     },
     beforeDestroy: function () {
 
     },
     methods: {
-      fetchHiveDbList() {
-        console.log('fetchHiveDbList()');
-        this.isLoadingDbList = true;
-        API.getHiveDBList({}).then(res => {
-          this.isLoadingDbList = false;
-          this.db_list = res.dbList;
+      getResultItem() {
+        let loading = this.$loading({
+          target: '.search-result-table .el-tabs__content',
+          lock: true,
+          text: '正在搜索。。。',
+          background: 'rgba(255,255,255,0.3)'
+        });
+        return API.getSearchResult().then(res => {
+          console.log(`getSearchResult() => `, res);
+          this.raw_search_result = res.list;
+          this.page_total = Number(res.total);
+          loading.close();
         }, err => {
           console.error(`err: `, err);
+          loading.close();
           this.$notify({
-            message: `${err}`,
+            message: `${err.message}`,
             type: 'error',
             duration: 0
           });
-          this.isLoadingDbList = false;
         });
       },
-      handleDbListCurrentRowChange(val) {
-        console.log(`handleDbListCurrentRowChange() val: => `, val);
-        if (this.isLoadingTableList) {
-          return false;
-        }
-        return this.getHiveDbById(val.id);
+      // 搜索结果按全部,库,表,字段过滤
+      handleActiveFilterChange() {
+
       },
-      handleTableListCurrentRowChange(val) {
-        console.log(`selectTable() val: => `, val);
-        if (this.isLoadingTableList) {
-          return false;
-        }
-        return this.$emit('selectTable', val.id);
-      },
-      getHiveDbById(db_id) {
-        console.log('getHiveDbById()');
-        this.isLoadingTableList = true;
-        return API.getHiveDbById({db_id: db_id}).then(res => {
-          this.isLoadingTableList = false;
-          this.current_table_list = res.tableList;
-        }, err => {
-          console.error(`err: `, err);
-          this.$notify({
-            message: `${err}`,
-            type: 'error',
-            duration: 0
-          });
-          this.isLoadingTableList = false;
-        });
+      // 搜索结果页分页
+      handleCurrentPageChange(val) {
+        console.log(`当前页: ${val}`);
+        this.current_page = Number(val);
+        // return this.fetchData();
       }
     }
   }
 </script>
 
 <style lang="stylus" scoped>
+    ping_an-orange = #FF6600
+
     .search-result-table
         display flex
+        flex-direction column
         width 100%
         height 100%
         overflow hidden
 
-    .dbs, .tables .list
-        overflow-x hidden
-        overflow-y auto
-        padding 0
+        .tabs
+            height calc(100% - 32px)
 
-        /deep/ .el-table::before
-            height 0
+        .pagination-container
+            height 32px
+            display flex
+            justify-content center
 
-        /deep/ .el-table
-            overflow-y auto
-            scroll-behavior smooth
+        /deep/ .el-tabs__header
+            margin-bottom 0
 
-            td
-                border-bottom 1px solid white
+        /deep/ .el-tabs__content
+            padding 5px
 
-            td:hover
-                cursor pointer
+        /deep/ .el-tabs__nav
+            width 100%
 
-            .el-table__body tr.current-row > td
-                background-color #f60
+            .el-tabs__active-bar
+                background-color ping_an-orange
 
-                .cell span {
-                    color white
-                    font-weight bold
-                }
+        /deep/ .el-tabs__item:hover
+            color ping_an-orange
 
-            .cell
-                line-height 20px
-
-                span
-                    color #1D1D1B
-                    font-size 15px
-                    line-height 20px
-
-                img
-                    display inline-block
-                    width 20px
-                    height auto
-                    vertical-align top
-                    margin-right .5em
-
-    .dbs
-        width 40%
-        height 100%
-
-    .tables
-        flex-grow 1
-        width auto
-        height 100%
-
-        .text-filter
+        /deep/ .el-tabs__item
+            width 25%
+            text-align center
+            user-select none
             height 30px
+            line-height 30px
 
-        .list
-            height calc(100% - 30px)
+            img
+                display inline-block
+                width 14px
+                height 14px
+                vertical-align middle
+                margin-right .5em
 
+        /deep/ .is-active
+            font-weight bold
+            color ping_an-orange
 
 </style>
