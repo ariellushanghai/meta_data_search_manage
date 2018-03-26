@@ -33,7 +33,7 @@
   import API from '@/service/api'
   import ElContainer from "element-ui/packages/container/src/main";
   import ElMain from "element-ui/packages/main/src/main";
-  import {map, assign} from 'lodash'
+  import {isEmpty, map, assign} from 'lodash'
   import format from 'date-fns/format'
 
   const zh_cn = require('date-fns/locale/zh-CN');
@@ -54,7 +54,8 @@
         activeTabName: 'hive',
         pageNum: 1,
         total: 10, // 表格总条目数
-        table_data: []
+        table_data: [],
+        hive_db: {}
       }
     },
     computed: {
@@ -79,11 +80,26 @@
       console.log(`MetaIndex.vue mounted()`);
       document.querySelector('#input_search').focus();
       this.fetchIndexData();
+      // 后台获取Hive DB列表，当空白搜索时直接跳去首条DB
+      this.fetchHiveDBList().then(res => {
+        console.log(`getHiveDBList res: `, res);
+        this.hive_db = res;
+      }, err => {
+        console.error(`err: `, err);
+      });
     },
     methods: {
       search() {
         if (this.input_search === '') {
-          return this.$router.push({name: 'blanksearchresult', params: {db: '0'}});
+          if (isEmpty(this.hive_db)) {
+            return this.fetchHiveDBList().then(res => {
+              console.log(`getHiveDBList res: `, res);
+              this.hive_db = res;
+              return this.$router.push({name: 'blanksearchresult', params: {db: this.hive_db.dbList[0].id}});
+            });
+          } else {
+            return this.$router.push({name: 'blanksearchresult', params: {db: this.hive_db.dbList[0].id}});
+          }
         } else {
           return this.$router.push({
             name: 'searchresult',
@@ -119,6 +135,10 @@
           });
           // window.onresize();
         });
+      },
+      // 获取Hive DB列表
+      fetchHiveDBList() {
+        return API.getHiveDBList({});
       },
       handleTabClick(tab, event) {
         console.log(tab, event);

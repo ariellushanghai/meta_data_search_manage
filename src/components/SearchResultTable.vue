@@ -1,53 +1,41 @@
 <template lang="pug">
-    <!--.search-result-table-->
-    <!--.tabs-->
-    <!--el-tabs(v-model='active_filter', @tab-click="handleActiveFilterChange")-->
-    <!--el-tab-pane(name='all')-->
-    <!--.tab-all(slot='label')-->
-    <!--img(:src="icon_all")-->
-    <!--span 全部-->
-    <!--result-item(:list='searchResultList', v-on:clickOnSearchResult='handleSelectSearchResult')-->
-
-    <!--el-tab-pane(name='db')-->
-    <!--.tab-db(slot='label')-->
-    <!--img(:src="icon_db")-->
-    <!--span 库-->
-    <!--result-item(:list='searchResultList', v-on:clickOnSearchResult='handleSelectSearchResult')-->
-
-    <!--el-tab-pane(name='table')-->
-    <!--.tab-table(slot='label')-->
-    <!--img(:src="icon_table")-->
-    <!--span 表-->
-    <!--result-item(:list='searchResultList', v-on:clickOnSearchResult='handleSelectSearchResult')-->
-
-    <!--el-tab-pane(name='field')-->
-    <!--.tab-field(slot='label')-->
-    <!--img(:src="icon_field")-->
-    <!--span 字段-->
-    <!--result-item(:list='searchResultList', v-on:clickOnSearchResult='handleSelectSearchResult')-->
-
-
     .search-result-table
         .tabs
-            el-radio-group(v-model="active_filter", size="medium")
+            el-radio-group(v-model='active_filter', size='medium')
                 el-radio-button.all(label='全部')
-                    img(:src="icon_all")
-                    span 全部
+                |
                 el-radio-button.db(label='库')
-                    img(:src="icon_db")
-                    span 库
+                |
                 el-radio-button.table(label='表')
-                    img(:src="icon_table")
-                    span 表
+                |
                 el-radio-button.field(label='字段')
-                    img(:src="icon_field")
-                    span 字段
-
-        .list
-            result-item(:list='searchResultList', v-on:clickOnSearchResult='handleSelectSearchResult')
-
+        |
+        .list(v-if='search_result_list.length !== 0')
+            .item(v-for='(item, index) in search_result_list', @click='handleSelectSearchResult(item, index)', :key='item.name', v-bind:class="{'highlighted': item.highlight}")
+                .header
+                    .hierarchy(v-if='item.type === "db"')
+                        .db.current(v-html='item.highLightName')
+                    |
+                    .hierarchy(v-if='item.type === "table"')
+                        .table.current(v-html='item.highLightName')
+                        |
+                        el-tooltip(:content='"所属库名: " + item.dbName', effect='light', placement='top')
+                            .db {{item.dbName}}
+                    |
+                    .hierarchy(v-if='item.type === "field"')
+                        .field.current(v-html='item.highLightName')
+                        |
+                        .split-horizion
+                            el-tooltip(:content='item.tableName', effect='light', placement='top')
+                                .table {{item.tableName}}
+                            |
+                            el-tooltip(:content='item.dbName', effect='light', placement='top')
+                                .db {{item.dbName}}
+                |
+                .content {{item.descr}}
+        |
         .pagination-container
-            el-pagination(@current-change="handleCurrentPageChange", :current-page.sync="current_page", :page-size="10", layout="total, prev, pager, next", :total="1000", :background="true", :small='true')
+            el-pagination(@current-change='handleCurrentPageChange', :current-page.sync='current_page', :page-size='10', layout='total, prev, pager, next', :total='1000', :background='true', :small='true')
 
 </template>
 
@@ -57,12 +45,11 @@
   import icon_db from '@/assets/images/icon_db.png'
   import icon_table from '@/assets/images/icon_table.png'
   import icon_field from '@/assets/images/icon_field.png'
-  import {isEmpty, filter, map, extend} from 'lodash'
-  import ResultItem from '@/components/ResultItem.vue'
+  import {map, extend} from 'lodash'
   import ElTabPane from "element-ui/packages/tabs/src/tab-pane";
 
   export default {
-    components: {ResultItem, ElTabPane},
+    components: {ElTabPane},
     name: "SearchResultTable",
     props: ['keyword'],
     data() {
@@ -74,30 +61,30 @@
         active_filter: '全部',
         current_page: 1,
         page_total: 0,
-        raw_search_result: []
+        search_result_list: []
       };
     },
     computed: {
       currentTableList() {
         return this.current_table_list.filter((table) => table.tableName.toLowerCase().includes(String(this.text_filter_for_tables).toLowerCase()))
       },
-      searchResultList() {
-        if (isEmpty(this.raw_search_result)) {
-          return []
-        }
-        return map(this.raw_search_result, (item) => {
-          return extend(item, {
-            'highlight': false
-          })
-        });
+      queryType() {
+        return {
+          '全部': 'all',
+          '库': 'db',
+          '表': 'table',
+          '字段': 'field'
+        }[this.active_filter];
       }
     },
     mounted() {
       console.log(`ResultItemTable: 'keyword': ${this.keyword}`);
       this.getResultItem();
     },
-    beforeDestroy: function () {
-
+    watch: {
+      queryType: function (new_type, old_type) {
+        
+      }
     },
     methods: {
       getResultItem() {
@@ -109,7 +96,11 @@
         });
         return API.getSearchResult().then(res => {
           console.log(`getSearchResult() => `, res);
-          this.raw_search_result = res.list;
+          this.search_result_list = map(res.list, (item) => {
+            return extend(item, {
+              'highlight': false
+            })
+          });
           this.page_total = Number(res.total);
           loading.close();
         }, err => {
@@ -133,8 +124,13 @@
         // return this.fetchData();
       },
       // 用户点击搜索结果
-      handleSelectSearchResult(item) {
-        // console.log(`handleSelectSearchResult(): `, item);
+      handleSelectSearchResult(item, index) {
+        // item.highlight = true;
+        this.search_result_list = map(this.search_result_list, (elem, idx) => {
+          elem.highlight = (index === idx);
+          return elem;
+        });
+        console.log(`handleSelectSearchResult`, item, index);
         return this.$emit('clickOnSearchResult', item);
       }
     }
@@ -192,9 +188,7 @@
                             vertical-align middle
                             margin-right .5em
 
-
-
-            /deep/ .el-radio-button__orig-radio:checked+.el-radio-button__inner
+            /deep/ .el-radio-button__orig-radio:checked + .el-radio-button__inner
                 background-color initial
                 color ping_an-orange
                 border 1px solid ping_an-orange
@@ -202,6 +196,83 @@
 
             /deep/ .el-radio-button__inner:hover
                 color ping_an-orange
+
+        .list
+            width 100%
+            padding 10px 5px
+            min-height 100%
+            overflow-y auto
+            background-color #f5f7fa
+
+            .item
+                width 100%
+                overflow hidden
+                margin-bottom 10px
+                border-radius 4px
+                border 1px solid #ebeef5
+                background-color #fff
+                box-shadow 0 2px 12px 0 rgba(0, 0, 0, .1)
+                color #303133
+
+                .header
+                    display flex
+                    width 100%
+                    line-height 40px
+                    font-size 13px
+                    text-align center
+
+                    .hierarchy
+                        display flex
+                        flex-direction column
+                        width 100%
+                        overflow hidden
+                        text-overflow ellipsis
+                        word-break break-all
+                        white-space nowrap
+
+                        .db, .table, .field
+                            overflow hidden
+                            text-overflow ellipsis
+                            word-break break-all
+                            white-space nowrap
+
+                        .db
+                            border-left 10px solid #67C23A
+                        .table
+                            border-left 10px solid #0277BD
+                        .field
+                            border-left 10px solid #AD1457
+
+                        .current
+                            font-size 14px
+                            font-weight bold
+                            border-bottom 1px dashed #ebeef5
+                            line-height 60px
+                            height 60px
+
+                .split-horizion
+                    display flex
+
+                    > div
+                        width 50%
+
+                .content
+                    height 50px
+                    padding 5px
+                    line-height 13.333px
+                    font-size 13.333px
+                    overflow hidden
+                    text-overflow ellipsis
+                    word-break break-all
+                    white-space nowrap
+
+            .item.highlighted
+                border-color ping_an-orange
+            .item:hover
+                cursor pointer
+
+            .item:last-of-type
+                margin-bottom 0
 
         .pagination-container
             height 32px

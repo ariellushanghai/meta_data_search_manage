@@ -23,7 +23,7 @@ axios.interceptors.request.use(
 
 axios.interceptors.response.use(
   res => {
-    console.log(`interceptors res: `, res);
+    // console.log(`interceptors res: `, res);
     // debugger;
     if (Number(res.status) === 200 && res.data) {
       if (Number(res.data.errcode) === 0) {

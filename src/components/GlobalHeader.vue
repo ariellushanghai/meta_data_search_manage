@@ -1,35 +1,25 @@
-<template>
-    <el-row class="row" type="flex">
-        <el-col :sm="logo_cols_small" :md="logo_cols_small" :lg="5" :xl="5" class="title">
-            <router-link class="link col" :to="{path: '/'}">
-                <img class="logo" :src="small_logo_file"/>
-            </router-link>
-            <div class="title-text">元数据管理</div>
-        </el-col>
+<template lang="pug">
+    el-row.row(type='flex')
+        el-col.title(:sm='logo_cols_small', :md='logo_cols_small', :lg='5', :xl='5')
+            router-link.link.col(:to="{path: '/'}")
+                img.logo(:src='small_logo_file')
+            |
+            .title-text 元数据管理
+        |
+        el-col(:sm='15', :md='15', :lg='16', :xl='16')
+            el-menu(mode='horizontal', background-color='#333644', text-color='#fff', active-text-color='#FF6600', :default-active='defaultActive', :router='true')
+                el-menu-item(v-for='menu in menuItems', :index="'/' + menu.route", :key='menu.route', :disabled='menu.disabled')
+                    | {{menu.display_name}}
+        |
+        el-col.col-user(:span='3')
+            el-dropdown(@command='handleCommand', placement='bottom')
+                el-button.btn-user(type='text')
+                    | {{userName}}
+                    i.el-icon-arrow-down.el-icon--right
+                |
+                el-dropdown-menu(slot='dropdown')
+                    el-dropdown-item(command='logout') 退出
 
-        <el-col :sm="15" :md="15" :lg="16" :xl="16">
-
-            <el-menu mode="horizontal" background-color="#333644" text-color="#fff" active-text-color="#FF6600"
-                     :default-active="defaultActive" :router="true">
-                <el-menu-item v-for="menu in menuItems" :index="'/' + menu.route" :key="menu.route"
-                              :disabled="menu.disabled">
-                    {{menu.display_name}}
-                </el-menu-item>
-            </el-menu>
-
-        </el-col>
-
-        <el-col class="col-user" :span="3">
-            <el-dropdown @command="handleCommand" placement="bottom">
-                <el-button class="btn-user" type="text">{{userName}}<i class="el-icon-arrow-down el-icon--right"></i>
-                </el-button>
-                <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item command="logout">退出</el-dropdown-item>
-                </el-dropdown-menu>
-            </el-dropdown>
-        </el-col>
-
-    </el-row>
 </template>
 
 <script>

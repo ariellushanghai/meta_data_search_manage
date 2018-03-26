@@ -6,18 +6,18 @@
                     template(slot-scope='scope')
                         img(:src='icon_db')
                         span(style='font-size: 14px;') {{scope.row.name}}
-
+        |
         .tables
             .text-filter
                 el-input(placeholder='过滤表格名', v-model='text_filter_for_tables', :fit='true', size='mini')
                     img(slot='prefix')
+            |
             .list
                 el-table(:data='currentTableList', @current-change='handleTableListCurrentRowChange', :highlight-current-row='true', :show-header='false', size='mini')
                     el-table-column(:show-overflow-tooltip='true')
                         template(slot-scope='scope')
                             img(:src='icon_table')
                             span(style='font-size: 14px;') {{scope.row.tableName}}
-
 
 </template>
 
