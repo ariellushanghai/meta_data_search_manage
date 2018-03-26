@@ -1,21 +1,24 @@
 <template lang="pug">
-    .list(v-if='dataResult')
-        .item(v-for='item in dataResult', @click="handleClick(item)")
+    .list(v-if='list.length !== 0')
+        .item(v-for='(item, index) in resultList', @click="handleClick(item, index)", :key="item.name", :class="{highlighted: item.highlight}")
             .header
                 .hierarchy(v-if='item.type === "db"')
-                    .db.current 库
-                .hierarchy(v-if='item.type === "table"')
-                    .table.current 表
-                    el-tooltip(:content='item.dbName', effect="light", placement='top')
-                        .db 库
-                .hierarchy(v-if='item.type === "field"')
-                    .field.current 字段
-                    el-tooltip(:content='item.tableName', effect="light", placement='top')
-                        .table 表
-                    el-tooltip(:content='item.dbName', effect="light", placement='top')
-                        .db 库
+                    .db.current(v-html='item.highLightName')
 
-                .name {{item.name}}
+                .hierarchy(v-if='item.type === "table"')
+                    .table.current(v-html='item.highLightName')
+                    el-tooltip(:content='"所属库名: " + item.dbName', effect="light", placement='top')
+                        .db {{item.dbName}}
+
+                .hierarchy(v-if='item.type === "field"')
+                    .field.current(v-html='item.highLightName')
+                    .split-horizion
+                        el-tooltip(:content='item.tableName', effect="light", placement='top')
+                            .table {{item.tableName}}
+                        el-tooltip(:content='item.dbName', effect="light", placement='top')
+                            .db {{item.dbName}}
+
+                <!--.name(v-html='item.highLightName')-->
 
             .content {{item.descr}}
 
@@ -24,7 +27,7 @@
 <script>
   // @flow
 
-  import {isEmpty} from 'lodash'
+  import {isEmpty, map, extend} from 'lodash'
 
   export default {
     name: 'ResultItem',
@@ -33,25 +36,26 @@
       return {}
     },
     computed: {
-      dataResult() {
-        if (isEmpty(this.list)) {
-          return false
-        }
-        return this.list
+      resultList() {
+        return this.list;
       }
     },
     mounted() {
       console.log(this.list);
     },
     methods: {
-      handleClick(item) {
-        console.log(`handleClick`, item);
+      handleClick(item, index) {
+        console.log(`handleClick`, item, index);
+        this.list[index].highlight = true;
+        return this.$emit('clickOnSearchResult', item);
       }
     }
   }
 </script>
 
 <style lang="stylus" scoped>
+    ping_an-orange = #FF6600
+
     .list
         width 100%
         padding 10px 5px
@@ -71,40 +75,46 @@
 
             .header
                 display flex
-                height 50px
-                line-height 50px
+                width 100%
+                line-height 40px
+                line-height 40px
                 font-size 13px
                 text-align center
 
                 .hierarchy
                     display flex
-                    align-items stretch
-                    width 50%
-                    height 100%
-                    color white
-
-                    .db
-                        flex-grow 1
-                        background-color #F9A825
-                    .table
-                        flex-grow 1
-                        background-color #0277BD
-                    .field
-                        flex-grow 1
-                        background-color #AD1457
-
-                    .current
-                        flex-grow 2
-                        font-size 14px
-                        font-weight bold
-                .name
-                    width 50%
+                    flex-direction column
+                    width 100%
                     overflow hidden
                     text-overflow ellipsis
                     word-break break-all
                     white-space nowrap
-                    padding 0 .5em
-                    border-bottom 1px dashed #ebeef5
+
+                    .db, .table, .field
+                        overflow hidden
+                        text-overflow ellipsis
+                        word-break break-all
+                        white-space nowrap
+
+                    .db
+                        border-left 10px solid #67C23A
+                    .table
+                        border-left 10px solid #0277BD
+                    .field
+                        border-left 10px solid #AD1457
+
+                    .current
+                        font-size 14px
+                        font-weight bold
+                        border-bottom 1px dashed #ebeef5
+                        line-height 60px
+                        height 60px
+
+            .split-horizion
+                display flex
+
+                > div
+                    width 50%
 
             .content
                 height 50px
@@ -116,6 +126,8 @@
                 word-break break-all
                 white-space nowrap
 
+        .item.highlighted
+            border-color ping_an-orange
         .item:hover
             cursor pointer
 

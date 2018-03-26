@@ -1,33 +1,54 @@
 <template lang="pug">
+    <!--.search-result-table-->
+    <!--.tabs-->
+    <!--el-tabs(v-model='active_filter', @tab-click="handleActiveFilterChange")-->
+    <!--el-tab-pane(name='all')-->
+    <!--.tab-all(slot='label')-->
+    <!--img(:src="icon_all")-->
+    <!--span 全部-->
+    <!--result-item(:list='searchResultList', v-on:clickOnSearchResult='handleSelectSearchResult')-->
+
+    <!--el-tab-pane(name='db')-->
+    <!--.tab-db(slot='label')-->
+    <!--img(:src="icon_db")-->
+    <!--span 库-->
+    <!--result-item(:list='searchResultList', v-on:clickOnSearchResult='handleSelectSearchResult')-->
+
+    <!--el-tab-pane(name='table')-->
+    <!--.tab-table(slot='label')-->
+    <!--img(:src="icon_table")-->
+    <!--span 表-->
+    <!--result-item(:list='searchResultList', v-on:clickOnSearchResult='handleSelectSearchResult')-->
+
+    <!--el-tab-pane(name='field')-->
+    <!--.tab-field(slot='label')-->
+    <!--img(:src="icon_field")-->
+    <!--span 字段-->
+    <!--result-item(:list='searchResultList', v-on:clickOnSearchResult='handleSelectSearchResult')-->
+
+
     .search-result-table
         .tabs
-            el-tabs(v-model='active_filter', @tab-click="handleActiveFilterChange")
-                el-tab-pane(name='all')
-                    div(slot='label')
-                        img(:src="icon_all")
-                        span 全部
-                    result-item(:list='raw_search_result')
+            el-radio-group(v-model="active_filter", size="medium")
+                el-radio-button.all(label='全部')
+                    img(:src="icon_all")
+                    span 全部
+                el-radio-button.db(label='库')
+                    img(:src="icon_db")
+                    span 库
+                el-radio-button.table(label='表')
+                    img(:src="icon_table")
+                    span 表
+                el-radio-button.field(label='字段')
+                    img(:src="icon_field")
+                    span 字段
 
-                el-tab-pane(name='db')
-                    div(slot='label')
-                        img(:src="icon_db")
-                        span 库
-                    result-item(:list='raw_search_result')
-
-                el-tab-pane(name='table')
-                    div(slot='label')
-                        img(:src="icon_table")
-                        span 表
-                    result-item(:list='raw_search_result')
-
-                el-tab-pane(name='field')
-                    div(slot='label')
-                        img(:src="icon_field")
-                        span 字段
-                    result-item(:list='raw_search_result')
+        .list
+            result-item(:list='searchResultList', v-on:clickOnSearchResult='handleSelectSearchResult')
 
         .pagination-container
             el-pagination(@current-change="handleCurrentPageChange", :current-page.sync="current_page", :page-size="10", layout="total, prev, pager, next", :total="1000", :background="true", :small='true')
+
 </template>
 
 <script>
@@ -36,13 +57,13 @@
   import icon_db from '@/assets/images/icon_db.png'
   import icon_table from '@/assets/images/icon_table.png'
   import icon_field from '@/assets/images/icon_field.png'
-  import {isEmpty, filter} from 'lodash'
+  import {isEmpty, filter, map, extend} from 'lodash'
   import ResultItem from '@/components/ResultItem.vue'
   import ElTabPane from "element-ui/packages/tabs/src/tab-pane";
 
   export default {
     components: {ResultItem, ElTabPane},
-    name: "ResultItemTable",
+    name: "SearchResultTable",
     props: ['keyword'],
     data() {
       return {
@@ -50,7 +71,7 @@
         icon_db,
         icon_table,
         icon_field,
-        active_filter: 'all',
+        active_filter: '全部',
         current_page: 1,
         page_total: 0,
         raw_search_result: []
@@ -59,6 +80,16 @@
     computed: {
       currentTableList() {
         return this.current_table_list.filter((table) => table.tableName.toLowerCase().includes(String(this.text_filter_for_tables).toLowerCase()))
+      },
+      searchResultList() {
+        if (isEmpty(this.raw_search_result)) {
+          return []
+        }
+        return map(this.raw_search_result, (item) => {
+          return extend(item, {
+            'highlight': false
+          })
+        });
       }
     },
     mounted() {
@@ -100,6 +131,11 @@
         console.log(`当前页: ${val}`);
         this.current_page = Number(val);
         // return this.fetchData();
+      },
+      // 用户点击搜索结果
+      handleSelectSearchResult(item) {
+        // console.log(`handleSelectSearchResult(): `, item);
+        return this.$emit('clickOnSearchResult', item);
       }
     }
   }
@@ -116,7 +152,56 @@
         overflow hidden
 
         .tabs
-            height calc(100% - 32px)
+            height 36px
+            width 100%
+
+            label.all
+                background-color white
+                /deep/ .el-radio-button__inner
+                    background-color white
+
+            label.db
+                color #67C23A
+                /deep/ .el-radio-button__inner
+                    color #67C23A
+
+            label.table
+                color #0277BD
+                /deep/ .el-radio-button__inner
+                    color #0277BD
+
+            label.field
+                color #AD1457
+                /deep/ .el-radio-button__inner
+                    color #AD1457
+
+            /deep/ .el-radio-group
+                width 100%
+
+                label
+                    width 25%
+
+                    /deep/ .el-radio-button__inner
+                        width 100%
+                        border-radius 0
+
+                        /deep/ img
+                            display inline-block
+                            width 14px
+                            height 14px
+                            vertical-align middle
+                            margin-right .5em
+
+
+
+            /deep/ .el-radio-button__orig-radio:checked+.el-radio-button__inner
+                background-color initial
+                color ping_an-orange
+                border 1px solid ping_an-orange
+                box-shadow 0 0 0 0 ping_an-orange
+
+            /deep/ .el-radio-button__inner:hover
+                color ping_an-orange
 
         .pagination-container
             height 32px
@@ -144,6 +229,7 @@
             user-select none
             height 30px
             line-height 30px
+            color #fff
 
             img
                 display inline-block
@@ -155,5 +241,17 @@
         /deep/ .is-active
             font-weight bold
             color ping_an-orange
+
+        /deep/ #tab-all
+            background-color white
+
+        /deep/ #tab-db
+            background-color #67C23A
+
+        /deep/ #tab-table
+            background-color #0277BD
+
+        /deep/ #tab-field
+            background-color #AD1457
 
 </style>

@@ -5,7 +5,7 @@
                 el-tabs(v-model='activeTabName', @tab-click='handleTabClick' type='border-card')
                     el-tab-pane(label='Hive' name='hive')
                         .search-result-container
-                            search-result-table(:keyword="keyword")
+                            search-result-table(:keyword="keyword", v-on:clickOnSearchResult='handleSelectSearchResult')
 
                     el-tab-pane(label='标签系统(暂无)' name='labelsys', :disabled="true") 标签系统
                     el-tab-pane(label='TimeLine(暂无)' name='timeline', :disabled="true") TimeLine
@@ -89,6 +89,11 @@
       },
       handleTabClick(tab, event) {
         console.log(tab, event);
+      },
+      // 用户点击搜索结果
+      handleSelectSearchResult(item) {
+        console.log(`handleSelectSearchResult(): `, item);
+        // return this.$emit('clickOnSearchResult', item);
       }
     }
   }
