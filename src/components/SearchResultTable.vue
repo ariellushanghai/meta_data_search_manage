@@ -12,27 +12,39 @@
         |
         .list(v-if='search_result_list.length !== 0')
             .item(v-for='(item, index) in search_result_list', @click='handleSelectSearchResult(item, index)', :key='item.name', v-bind:class="{'highlighted': item.highlight}")
-                .header
-                    .hierarchy(v-if='item.type === "db"')
-                        .db.current(v-html='item.highLightName')
+                .label(:class="item.type")
+                    span {{convertTypeToZh(item.type)}}
+
+                .main
                     |
-                    .hierarchy(v-if='item.type === "table"')
-                        .table.current(v-html='item.highLightName')
+                    .header
+                        .hierarchy(v-if='item.type === "db"')
                         |
-                        el-tooltip(:content='"所属库名: " + item.dbName', effect='light', placement='top')
-                            .db {{item.dbName}}
-                    |
-                    .hierarchy(v-if='item.type === "field"')
-                        .field.current(v-html='item.highLightName')
+                        .hierarchy(v-if='item.type === "table"', :style='{width: "25%"}')
+                            .box
+                                .db 库
+                                .text {{item.dbName}}
+
                         |
-                        .split-horizion
-                            el-tooltip(:content='item.tableName', effect='light', placement='top')
-                                .table {{item.tableName}}
+                        .hierarchy(v-if='item.type === "field"', :style='{width: "50%"}')
+                            .box(:style='{width: "50%"}')
+                                .db 库
+                                .text {{item.dbName}}
+                            .box(:style='{width: "50%"}')
+                                .table 表
+                                .text {{item.tableName}}
+                        |
+                        .title-container
+                            .title(v-html='item.highLightName')
                             |
-                            el-tooltip(:content='item.dbName', effect='light', placement='top')
-                                .db {{item.dbName}}
-                |
-                .content {{item.descr}}
+                            span.count(v-if='item.type === "db"')
+                                | {{'表数量: ' + item.cnt}}
+                            |
+                            span.count(v-if='item.type === "table"')
+                                | {{'字段数量: ' + item.cnt}}
+
+                    |
+                    .content {{item.descr}}
         |
         .pagination-container
             el-pagination(@current-change='handleCurrentPageChange', :current-page.sync='current_page', :page-size='10', layout='total, prev, pager, next', :total='1000', :background='true', :small='true')
@@ -83,7 +95,7 @@
     },
     watch: {
       queryType: function (new_type, old_type) {
-        
+
       }
     },
     methods: {
@@ -132,6 +144,15 @@
         });
         console.log(`handleSelectSearchResult`, item, index);
         return this.$emit('clickOnSearchResult', item);
+      },
+      // 中文转换搜索结果的type
+      convertTypeToZh(zh) {
+        return {
+          'all': '全部',
+          'db': '库',
+          'table': '表',
+          'field': '字段'
+        }[zh];
       }
     }
   }
@@ -139,6 +160,7 @@
 
 <style lang="stylus" scoped>
     ping_an-orange = #FF6600
+    custom-grey = #ebeef5
 
     .search-result-table
         display flex
@@ -199,75 +221,128 @@
 
         .list
             width 100%
-            padding 10px 5px
-            min-height 100%
+            padding 15px 5px
+            height calc(100% - 32px - 36px)
             overflow-y auto
             background-color #f5f7fa
 
             .item
+                display flex
+                align-items stretch
                 width 100%
                 overflow hidden
-                margin-bottom 10px
+                margin-bottom 15px
                 border-radius 4px
-                border 1px solid #ebeef5
-                background-color #fff
+                background-color #f5f7fa
+                border 2px solid rgba(0, 0, 0, 0)
                 box-shadow 0 2px 12px 0 rgba(0, 0, 0, .1)
                 color #303133
+                will-change border-color
+                transition all .1s ease
 
-                .header
+                .label
                     display flex
-                    width 100%
-                    line-height 40px
-                    font-size 13px
-                    text-align center
+                    align-items center
+                    justify-content center
+                    width 25px
+                    min-width 25px
+                    font-size 14px
 
-                    .hierarchy
+                    span
+                        text-align center
+                        vertical-align middle
+                        color white
+
+                .db
+                    background #67C23A
+                .table
+                    background #0277BD
+                .field
+                    background #AD1457
+
+                .main
+                    width calc(100% - 25px)
+
+                    .header
                         display flex
-                        flex-direction column
                         width 100%
-                        overflow hidden
-                        text-overflow ellipsis
-                        word-break break-all
-                        white-space nowrap
+                        height 50px
+                        line-height 50px
+                        font-size 13px
+                        text-align center
+                        background-color white
+                        border-bottom 1px solid custom-grey
 
-                        .db, .table, .field
-                            overflow hidden
-                            text-overflow ellipsis
-                            word-break break-all
-                            white-space nowrap
+                        .title-container
+                            flex-grow 1
+                            position relative
+                            padding 0 5px
+                            height 100%
+                            max-width 100%
 
-                        .db
-                            border-left 10px solid #67C23A
-                        .table
-                            border-left 10px solid #0277BD
-                        .field
-                            border-left 10px solid #AD1457
+                            .title
+                                line-height 50px
+                                height 100%
+                                overflow hidden
+                                text-overflow ellipsis
+                                word-break break-all
+                                white-space nowrap
+                                text-transform uppercase
 
-                        .current
-                            font-size 14px
-                            font-weight bold
-                            border-bottom 1px dashed #ebeef5
-                            line-height 60px
-                            height 60px
+                                /deep/ span.highlight
+                                    color ping_an-orange
+                                    font-weight bold
 
-                .split-horizion
-                    display flex
+                            span.count
+                                position absolute
+                                bottom 5px
+                                right 5px
+                                color #3492ff
+                                font-size 10px
+                                line-height initial
 
-                    > div
-                        width 50%
+                        .hierarchy
+                            display flex
+                            max-width 50%
 
-                .content
-                    height 50px
-                    padding 5px
-                    line-height 13.333px
-                    font-size 13.333px
-                    overflow hidden
-                    text-overflow ellipsis
-                    word-break break-all
-                    white-space nowrap
+                            .box
+                                display flex
+                                max-width 100%
+                                height 100%
+                                line-height initial
+                                flex-direction column
+                                flex-grow 1
+
+                                > div
+                                    height 50%
+                                    line-height 25px
+
+                                .db, .table
+                                    color white
+
+                                .text
+                                    padding 0 .5em
+                                    overflow hidden
+                                    text-overflow ellipsis
+                                    word-break break-all
+                                    white-space nowrap
+                                    font-size 11px
+                                    border-right 1px solid custom-grey
+
+                    .content
+                        background-color white
+                        height 50px
+                        padding 5px
+                        line-height 13.333px
+                        font-size 13.333px
+                        overflow-x hidden
+                        overflow-y auto
 
             .item.highlighted
                 border-color ping_an-orange
+            .item.highlighted:hover
+                cursor unset
+
             .item:hover
                 cursor pointer
 
@@ -308,21 +383,5 @@
                 height 14px
                 vertical-align middle
                 margin-right .5em
-
-        /deep/ .is-active
-            font-weight bold
-            color ping_an-orange
-
-        /deep/ #tab-all
-            background-color white
-
-        /deep/ #tab-db
-            background-color #67C23A
-
-        /deep/ #tab-table
-            background-color #0277BD
-
-        /deep/ #tab-field
-            background-color #AD1457
 
 </style>

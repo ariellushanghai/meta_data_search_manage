@@ -2,10 +2,15 @@
     el-container
         el-main.main
             .tabs-container
-                el-tabs(v-model='activeTabName', @tab-click='handleTabClick' type='border-card')
+                el-tabs(v-model='active_tab_name', @tab-click='handleTabClick' type='border-card')
                     el-tab-pane(label='Hive' name='hive')
                         .search-result-container
                             search-result-table(:keyword="keyword", v-on:clickOnSearchResult='handleSelectSearchResult')
+                        |
+                        .result-details
+                            transition(name="fade", mode="out-in", :appear="true")
+                                component(v-bind:is='result_details_view', :table_id="table_id")
+
 
                     el-tab-pane(label='标签系统(暂无)' name='labelsys', :disabled="true") 标签系统
                     el-tab-pane(label='TimeLine(暂无)' name='timeline', :disabled="true") TimeLine
@@ -38,13 +43,9 @@
     },
     data() {
       return {
-        input_search: '',
-        isSearching: false,
-        activeTabName: 'hive',
-        pageNum: 1,
-        pageSize: 10,
-        table_data: [],
-        selected_table_id: 0
+        active_tab_name: 'hive',
+        result_details_view: '',
+        table_id: 0
       }
     },
     computed: {
@@ -93,6 +94,8 @@
       // 用户点击搜索结果
       handleSelectSearchResult(item) {
         console.log(`handleSelectSearchResult(): `, item);
+        this.result_details_view = 'TableDetails';
+        this.table_id = 7777777
         // return this.$emit('clickOnSearchResult', item);
       }
     }
@@ -117,21 +120,26 @@
             width 100%
             padding 0
             overflow hidden
+
         /deep/ .el-tab-pane
             display flex
             align-items stretch
+            justify-content space-between
             width 100%
             height 100%
             overflow hidden
 
     .search-result-container
         flex-shrink 0
+        flex-grow 0
         width 33%
         min-width 500px
         max-width 600px
+        height 100%
         padding 0
 
-    .selected-table
+    .result-details
+        width 66%
         flex-grow 1
-        padding 5px
+        padding 0
 </style>
