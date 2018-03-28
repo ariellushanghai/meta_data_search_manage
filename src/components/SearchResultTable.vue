@@ -142,7 +142,7 @@
           elem.highlight = (index === idx);
           return elem;
         });
-        console.log(`handleSelectSearchResult`, item, index);
+        console.log(`<SearchResultTable/>: clickOnSearchResult: `, item, index);
         return this.$emit('clickOnSearchResult', item);
       },
       // 中文转换搜索结果的type
@@ -353,6 +353,11 @@
             height 32px
             display flex
             justify-content center
+
+            /deep/ .el-pagination
+                display flex
+                justify-content center
+                align-items center
 
         /deep/ .el-tabs__header
             margin-bottom 0

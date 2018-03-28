@@ -5,15 +5,16 @@
                 el-tabs(v-model='active_tab_name', @tab-click='handleTabClick' type='border-card')
                     el-tab-pane(label='Hive' name='hive')
                         .search-result-container
-                            search-result-table(:keyword="keyword", v-on:clickOnSearchResult='handleSelectSearchResult')
+                            search-result-table(:keyword='keyword', v-on:clickOnSearchResult='handleSelectSearchResult')
+                        //- 搜索结果条目对应的详情挂载点: 库，表，字段详情
                         |
                         .result-details
-                            transition(name="fade", mode="out-in", :appear="true")
-                                component(v-bind:is='result_details_view', :table_id="table_id")
+                            transition(name='fade', mode='out-in', :appear='true')
+                                component(v-bind:is='result_details_view', :db_id='selected_db_id', :table_id='selected_table_id', :high_light_field_id='selected_field_id')
 
 
-                    el-tab-pane(label='标签系统(暂无)' name='labelsys', :disabled="true") 标签系统
-                    el-tab-pane(label='TimeLine(暂无)' name='timeline', :disabled="true") TimeLine
+                    el-tab-pane(label='标签系统(暂无)' name='labelsys', :disabled='true') 标签系统
+                    el-tab-pane(label='TimeLine(暂无)' name='timeline', :disabled='true') TimeLine
 </template>
 
 <script>
@@ -21,6 +22,7 @@
   import API from '@/service/api'
   import SearchResultTable from '@/components/SearchResultTable.vue'
   import DbTableTreeMenu from '@/components/DbTableTreeMenu.vue'
+  import DbDetails from '@/components/DbDetails.vue'
   import TableDetails from '@/components/TableDetails.vue'
   import ElContainer from "element-ui/packages/container/src/main";
   import ElMain from "element-ui/packages/main/src/main";
@@ -35,6 +37,7 @@
       ElContainer,
       SearchResultTable,
       DbTableTreeMenu,
+      DbDetails,
       TableDetails
     },
     name: 'SearchResult',
@@ -45,7 +48,9 @@
       return {
         active_tab_name: 'hive',
         result_details_view: '',
-        table_id: 0
+        selected_db_id: null,
+        selected_table_id: null,
+        selected_field_id: null
       }
     },
     computed: {
@@ -94,9 +99,25 @@
       // 用户点击搜索结果
       handleSelectSearchResult(item) {
         console.log(`handleSelectSearchResult(): `, item);
-        this.result_details_view = 'TableDetails';
-        this.table_id = 7777777
-        // return this.$emit('clickOnSearchResult', item);
+
+        switch (item.type) {
+          case 'db':
+            console.log('db');
+            this.result_details_view = 'DbDetails';
+            this.selected_db_id = Number(item.id);
+            break;
+          case 'table':
+            this.result_details_view = 'TableDetails';
+            this.selected_table_id = Number(item.id);
+            break;
+          case 'field':
+            this.result_details_view = 'TableDetails';
+            this.selected_table_id = Number(item.tableId);
+            this.selected_field_id = Number(item.id);
+            break;
+          default:
+            console.error(`item.type: ${item.type}`);
+        }
       }
     }
   }

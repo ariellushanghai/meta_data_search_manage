@@ -112,7 +112,7 @@
 
   export default {
     name: "TableDetails",
-    props: ['table_id'],
+    props: ['table_id', 'high_light_field_id'],
     data() {
       return {
         icon_db,
@@ -144,7 +144,6 @@
           "isAllowNull": 1,
           "codeValueType": null
         },
-
         table_basic_info: [],
         table_metas: {},
         authed_people: [],
@@ -367,10 +366,6 @@
         align-items baseline
 
         .btn-add-tags
-            /*position absolute*/
-            /*bottom 0*/
-            /*margin-bottom 5px*/
-            /*right 0*/
             margin-right 5px
             max-height 30px
 

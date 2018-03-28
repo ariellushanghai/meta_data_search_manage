@@ -5,7 +5,7 @@
                 el-tabs(v-model='activeTabName', @tab-click='handleTabClick', type='border-card')
                     el-tab-pane(label='Hive', name='hive')
                         .hives-and-tables
-                            db-table-tree-menu(v-on:selecttable='handleSelectTable')
+                            db-table-tree-menu(v-on:select_table='handleSelectTable')
                         |
                         .selected-table(v-show='selected_table_id !== 0')
                             table-details(:table_id='selected_table_id')
