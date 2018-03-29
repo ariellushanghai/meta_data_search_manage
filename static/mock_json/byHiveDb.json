@@ -1,5 +1,17 @@
 {
   "data": {
+    "DB_INFO": {
+      "id": "100",
+      "name": "riskdw_examples_0_INSERT OVERWRITE TABLE 0",
+      "descr": "描述信息",
+      "tableCnt": 66,
+      "dbAdmin": "riskdw_admin",
+      "sasPermissionAdmin": "SAS管理员名字",
+      "creator": "admin",
+      "createTime": 1520352000000,
+      "modifier": "修改人",
+      "modifyTime": 1521257888175
+    },
     "TABLETOTAL": 54,
     "tableList": [
       {

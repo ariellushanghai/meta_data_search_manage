@@ -10,7 +10,8 @@
                         |
                         .result-details
                             transition(name='fade', mode='out-in', :appear='true')
-                                component(v-bind:is='result_details_view', :db_id='selected_db_id', :table_id='selected_table_id', :high_light_field_id='selected_field_id')
+                                keep-alive
+                                    component(v-bind:is='result_details_view', :db_id='selected_db_id', :table_id='selected_table_id', :high_light_field_id='selected_field_id')
 
 
                     el-tab-pane(label='标签系统(暂无)' name='labelsys', :disabled='true') 标签系统
@@ -19,17 +20,17 @@
 
 <script>
   // @flow
-  import API from '@/service/api'
-  import SearchResultTable from '@/components/SearchResultTable.vue'
-  import DbTableTreeMenu from '@/components/DbTableTreeMenu.vue'
-  import DbDetails from '@/components/DbDetails.vue'
-  import TableDetails from '@/components/TableDetails.vue'
+  import API from "@/service/api";
+  import SearchResultTable from "@/components/SearchResultTable.vue";
+  import DbTableTreeMenu from "@/components/DbTableTreeMenu.vue";
+  import DbDetails from "@/components/DbDetails.vue";
+  import TableDetails from "@/components/TableDetails.vue";
   import ElContainer from "element-ui/packages/container/src/main";
   import ElMain from "element-ui/packages/main/src/main";
-  import {map, assign} from 'lodash'
-  import format from 'date-fns/format'
+  import { map, assign } from "lodash";
+  import format from "date-fns/format";
 
-  const zh_cn = require('date-fns/locale/zh-CN');
+  const zh_cn = require("date-fns/locale/zh-CN");
 
   export default {
     components: {
@@ -40,18 +41,18 @@
       DbDetails,
       TableDetails
     },
-    name: 'SearchResult',
+    name: "SearchResult",
     metaInfo: {
-      titleTemplate: '%s-Hive搜索结果'
+      titleTemplate: "%s-Hive搜索结果"
     },
     data() {
       return {
-        active_tab_name: 'hive',
-        result_details_view: '',
+        active_tab_name: "hive",
+        result_details_view: "",
         selected_db_id: null,
         selected_table_id: null,
         selected_field_id: null
-      }
+      };
     },
     computed: {
       keyword() {
@@ -62,7 +63,7 @@
       }
     },
     watch: {
-      '$route'(to, from) {
+      "$route"(to, from) {
         console.log(`$route changed: to : `, to, `from:`, from);
         if (to.query.keyword !== from.query.keyword) {
           return this.fetchIndexData();
@@ -101,17 +102,17 @@
         console.log(`handleSelectSearchResult(): `, item);
 
         switch (item.type) {
-          case 'db':
-            console.log('db');
-            this.result_details_view = 'DbDetails';
+          case "db":
+            console.log("db");
+            this.result_details_view = "DbDetails";
             this.selected_db_id = Number(item.id);
             break;
-          case 'table':
-            this.result_details_view = 'TableDetails';
+          case "table":
+            this.result_details_view = "TableDetails";
             this.selected_table_id = Number(item.id);
             break;
-          case 'field':
-            this.result_details_view = 'TableDetails';
+          case "field":
+            this.result_details_view = "TableDetails";
             this.selected_table_id = Number(item.tableId);
             this.selected_field_id = Number(item.id);
             break;
@@ -120,7 +121,7 @@
         }
       }
     }
-  }
+  };
 </script>
 
 <style lang="stylus" scoped>
