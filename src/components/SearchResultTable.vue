@@ -38,7 +38,7 @@
                             .title(v-html='item.highLightName')
                             |
                             span.count(v-if='item.type === "db"')
-                                | {{'表数量: ' + item.cnt}}
+                                | {{"表数量: " + item.cnt}}
                             |
                             span.count(v-if='item.type === "table"')
                                 | {{'字段数量: ' + item.cnt}}
@@ -57,11 +57,11 @@
   import icon_db from '@/assets/images/icon_db.png'
   import icon_table from '@/assets/images/icon_table.png'
   import icon_field from '@/assets/images/icon_field.png'
-  import {map, extend} from 'lodash'
+  import { map, extend } from 'lodash'
   import ElTabPane from "element-ui/packages/tabs/src/tab-pane";
 
   export default {
-    components: {ElTabPane},
+    components: { ElTabPane },
     name: "SearchResultTable",
     props: ['keyword'],
     data() {
@@ -94,7 +94,7 @@
       this.getResultItem();
     },
     watch: {
-      queryType: function (new_type, old_type) {
+      queryType: function(new_type, old_type) {
 
       }
     },
@@ -276,7 +276,7 @@
                         .title-container
                             flex-grow 1
                             position relative
-                            padding 0 5px
+                            padding 0 2.5px
                             height 100%
                             max-width 100%
 
@@ -295,11 +295,11 @@
 
                             span.count
                                 position absolute
-                                bottom 5px
-                                right 5px
+                                bottom 2.5px
+                                right 2.5px
                                 color #3492ff
                                 font-size 10px
-                                line-height initial
+                                line-height 10px
 
                         .hierarchy
                             display flex

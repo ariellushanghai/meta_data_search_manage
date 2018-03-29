@@ -18,15 +18,15 @@
 
 <script>
   // @flow
-  import API from '@/service/api'
-  import DbTableTreeMenu from '@/components/DbTableTreeMenu.vue'
-  import TableDetails from '@/components/TableDetails.vue'
+  import API from "@/service/api";
+  import DbTableTreeMenu from "@/components/DbTableTreeMenu.vue";
+  import TableDetails from "@/components/TableDetails.vue";
   import ElContainer from "element-ui/packages/container/src/main";
   import ElMain from "element-ui/packages/main/src/main";
-  import {map, assign} from 'lodash'
-  import format from 'date-fns/format'
+  import { map, assign } from "lodash";
+  import format from "date-fns/format";
 
-  const zh_cn = require('date-fns/locale/zh-CN');
+  const zh_cn = require("date-fns/locale/zh-CN");
 
   export default {
     components: {
@@ -35,21 +35,20 @@
       DbTableTreeMenu,
       TableDetails
     },
-    name: 'BlankSearchResult',
+    name: "BlankSearchResult",
     metaInfo: {
-      titleTemplate: '%s-无匹配搜索结果'
+      titleTemplate: "%s-无匹配搜索结果"
     },
     data() {
       return {
-        current_db_id: '',
-        activeTabName: 'hive',
+        current_db_id: "",
+        activeTabName: "hive",
         selected_table_id: 0
-      }
+      };
     },
-    computed: {
-    },
+    computed: {},
     watch: {
-      '$route'(to, from) {
+      "$route"(to, from) {
         console.log(`$route changed: to : `, to, `from:`, from);
         if (to.params.db !== from.params.db) {
 
@@ -80,7 +79,7 @@
         console.log(tab, event);
       }
     }
-  }
+  };
 </script>
 
 <style lang="stylus" scoped>
@@ -111,11 +110,12 @@
     .hives-and-tables
         flex-shrink 0
         width 33%
-        min-width 500px
-        max-width 600px
+        /*min-width 500px*/
+        /*max-width 600px*/
         padding 5px
 
     .selected-table
         flex-grow 1
+        width 67%
         padding 5px
 </style>

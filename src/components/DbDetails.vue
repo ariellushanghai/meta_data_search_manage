@@ -60,7 +60,6 @@
       dbInfo() {
         return map(pick(this.db_info, ["name", "tableCnt", "createTime", "dbAdmin", "sasPermissionAdmin", "modifyTime"]),
           (v, k) => {
-            console.log(v, k);
             return {
               display_name: this.mapping[k],
               value: v
@@ -82,7 +81,6 @@
     },
     deactivated: function() {
       console.log(`<DbDetails/> deactivated()`);
-
     },
     methods: {
       handleTableListCurrentRowChange(val) {

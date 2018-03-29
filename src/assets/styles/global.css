@@ -60,3 +60,7 @@ input::selection, .cell *::selection, .cell::selection, div::selection, span::se
     position: relative;
     overflow: hidden;
 }
+
+.el-tabs /deep/ .el-tabs__item.is-disabled {
+    cursor: not-allowed;
+}

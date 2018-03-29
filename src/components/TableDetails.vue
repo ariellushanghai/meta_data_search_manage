@@ -38,7 +38,7 @@
                 el-button(size="mini") 保存
                 el-button(size="mini") 取消
         // 编辑标签弹出框
-        el-dialog.dialog-edit-tags(title='编辑标签', :visible.sync='dialog_edit_tags_visible', width='50%', top='50px', append-to-body='', modal-append-to-body='', lock-scroll='', :show-close='true', :close-on-click-modal='false', :close-on-press-escape='false', close='handleCloseEditTags')
+        el-dialog.dialog-edit-tags(title='编辑标签', :visible.sync='dialog_edit_tags_visible', width='33%', top='50px', append-to-body='', modal-append-to-body='', lock-scroll='', :show-close='true', :close-on-click-modal='false', :close-on-press-escape='false', close='handleCloseEditTags')
             el-form(:model='form_edit_tags', @submit.native.prevent="", :disabled='isSubmittingTagsForm', label-width="100px", size='small', class="form-edit-tags")
                 el-form-item(label='请输入: ', prop='new_tag')
                     el-input(v-model.trim='form_edit_tags.new_tag', placeholder='标签名', @keyup.enter.native="handleNewTagInput", @blur="handleNewTagInput", :style='{"width": "200px"}')
@@ -47,7 +47,7 @@
         .table-metas
             .entries
                 .entry(v-for='entry in tableMetas', :key='entry.name')
-                    span.display-name {{entry.display_name + ' : '}}
+                    span.display-name {{entry.display_name + " : "}}
                     span.value {{entry.value}}
             .tags
                 .tags-title
@@ -58,7 +58,7 @@
         .table
             el-tabs(v-model='activeTabName', @tab-click='handleTabClick' type='border-card')
                 el-tab-pane(label='基本信息查询' name='basic_info')
-                    el-table.table-basic-info(:data="tableBasicInfo", @current-change="handleCurrentRowChangeBasicInfo", :highlight-current-row='true', :border='true', :stripe='true', size='mini')
+                    el-table.table-basic-info(:data="tableBasicInfo", ref="table", @current-change="handleCurrentRowChangeBasicInfo", :highlight-current-row='true', :border='true', :stripe='true', size='mini')
                         el-table-column(prop="fieldName", label="字段名称", :sortable="true", :show-overflow-tooltip='true')
                         el-table-column(prop="isPrimarykey", label="是否主键", :sortable="true", align="center", width='100')
                             template(slot-scope="scope")
@@ -101,66 +101,74 @@
 </template>
 
 <script>
-  import API from '@/service/api'
-  import icon_db from '@/assets/images/icon_db.png'
-  import icon_table from '@/assets/images/icon_table.png'
-  import icon_person from '@/assets/images/ic_person_outline_24px.svg'
-  import {extend, map, assign, pick, isEmpty, isNumber, filter, debounce} from 'lodash'
-  import format from 'date-fns/format'
+  import API from "@/service/api";
+  import icon_db from "@/assets/images/icon_db.png";
+  import icon_table from "@/assets/images/icon_table.png";
+  import icon_person from "@/assets/images/ic_person_outline_24px.svg";
+  import {
+    extend,
+    map,
+    assign,
+    pick,
+    isEmpty,
+    isNumber
+  } from "lodash";
+  import format from "date-fns/format";
 
-  const zh_cn = require('date-fns/locale/zh-CN');
+  const zh_cn = require("date-fns/locale/zh-CN");
 
   export default {
     name: "TableDetails",
-    props: ['table_id', 'high_light_field_id'],
+    props: ["table_id", "high_light_field_id"],
     data() {
       return {
         icon_db,
         icon_table,
         icon_person,
         mapping: {
-          "dbName": "所属库名",
-          "tableName": "表名",
-          "amount": "数据量",
-          "tableCreateTime": "创建时间",
-          "tableEffectTime": "生效时间",
-          "tableUpdateTime": "更新时间",
-          "dataOwner": "数据归属",
-          "devOwner": "开发归属",
-          "businessOwner": "口径归属"
+          dbName: "所属库名",
+          tableName: "表名",
+          amount: "数据量",
+          tableCreateTime: "创建时间",
+          tableEffectTime: "生效时间",
+          tableUpdateTime: "更新时间",
+          dataOwner: "数据归属",
+          devOwner: "开发归属",
+          businessOwner: "口径归属"
         },
         isLoadingTable: false,
         dialog_edit_field_visible: false,
         dialog_edit_tags_visible: false,
         isSubmittingFieldForm: false,
         isSubmittingTagsForm: false,
-        form_edit_field: {},// 选中编辑的字段副本
+        form_edit_field: {}, // 选中编辑的字段副本
         form_edit_tags: {
-          new_tag: ''
-        },// 选中编辑的字段副本
+          new_tag: ""
+        }, // 选中编辑的字段副本
         tmpl_form_edit_field: {
-          "statisticsCalibre": null,
-          "isSensitiveInfo": 1,
-          "isAllowNull": 1,
-          "codeValueType": null
+          statisticsCalibre: null,
+          isSensitiveInfo: 1,
+          isAllowNull: 1,
+          codeValueType: null
         },
         table_basic_info: [],
         table_metas: {},
         authed_people: [],
         timeline_data: [
           {
-            tag: '2018-01-12',
-            content: 'hallo'
+            tag: "2018-01-12",
+            content: "hallo"
           },
           {
-            tag: '2018-01-13',
-            content: 'world'
+            tag: "2018-01-13",
+            content: "world"
           },
           {
-            tag: '2018-01-14',
-            content: '=v ='
-          }],
-        activeTabName: 'basic_info'
+            tag: "2018-01-14",
+            content: "=v ="
+          }
+        ],
+        activeTabName: "basic_info"
       };
     },
     computed: {
@@ -169,90 +177,125 @@
           return [];
         }
         // return this.table_basic_info;
-        return map(this.table_basic_info, (row) => {
+        return map(this.table_basic_info, row => {
           return assign(row, {
-            "fieldCreateTime": format(
+            fieldCreateTime: format(
               new Date(row.fieldCreateTime),
-              'YYYY[年]MMMD[日]Ah[点]mm[分]ss[秒]',
-              {locale: zh_cn}
+              "YYYY[年]MMMD[日]Ah[点]mm[分]ss[秒]",
+              { locale: zh_cn }
             ),
-            "fieldUpdateTime": format(
+            fieldUpdateTime: format(
               new Date(row.fieldUpdateTime),
-              'YYYY[年]MMMD[日]Ah[点]mm[分]ss[秒]',
-              {locale: zh_cn}
+              "YYYY[年]MMMD[日]Ah[点]mm[分]ss[秒]",
+              { locale: zh_cn }
             ),
-            "modifyTime": format(
+            modifyTime: format(
               new Date(row.modifyTime),
-              'YYYY[年]MMMD[日]Ah[点]mm[分]ss[秒]',
-              {locale: zh_cn}
+              "YYYY[年]MMMD[日]Ah[点]mm[分]ss[秒]",
+              { locale: zh_cn }
             )
-          })
+          });
         });
       },
       tableMetas() {
         if (isEmpty(this.table_metas)) {
           return [];
         }
-        return map(pick(this.table_metas, ['tableName', 'dbName', 'amount', 'tableCreateTime', 'tableEffectTime', 'tableUpdateTime', 'dataOwner', 'devOwner', 'businessOwner']),
+        return map(
+          pick(this.table_metas, [
+            "tableName",
+            "dbName",
+            "amount",
+            "tableCreateTime",
+            "tableEffectTime",
+            "tableUpdateTime",
+            "dataOwner",
+            "devOwner",
+            "businessOwner"
+          ]),
           (v, k) => {
-            console.log(v, k);
             return {
               display_name: this.mapping[k],
               value: v
             };
-          });
+          }
+        );
       },
       tableMetaTags() {
-        if (this.table_metas.tags && this.table_metas.tags !== '') {
-          return this.table_metas.tags.split(',');
+        if (this.table_metas.tags && this.table_metas.tags !== "") {
+          return this.table_metas.tags.split(",");
         }
-        return []
+        return [];
       }
     },
     mounted() {
-      // this.fetchTable();
-
+      this.setUpUI();
+      console.log(`<TableDetails/> mounted(): this.table_id: ${this.table_id}, this.high_light_field_id: ${this.high_light_field_id}`);
+    },
+    activated() {
+      this.setUpUI();
+      console.log(`<TableDetails/> activated(): this.table_id: ${this.table_id}, this.high_light_field_id: ${this.high_light_field_id}`);
+    },
+    deactivated() {
+      this.setUpUI();
+      console.log(`<TableDetails/> deactivated(): this.table_id: ${this.table_id}, this.high_light_field_id: ${this.high_light_field_id}`);
     },
     watch: {
-      'table_id'(new_id, old_id) {
+      table_id(new_id, old_id) {
         console.log(`table_id changed: new_id : `, new_id, `old_id:`, old_id);
         if (isNumber(Number(this.table_id)) && Number(this.table_id) !== 0) {
-          return this.fetchTable(Number(this.table_id))
+          return this.setUpUI();
+        }
+      },
+      high_light_field_id(new_id, old_id) {
+        console.log(`high_light_field_id changed: new_id : `, new_id, `old_id:`, old_id);
+        if (isNumber(Number(this.high_light_field_id))) {
+          return this.setUpUI();
         }
       }
     },
     methods: {
+      setUpUI() {
+        this.fetchTable(this.table_id);
+        if (this.high_light_field_id) {
+          let field = this.tableBasicInfo[0];
+          this.$refs.table.setCurrentRow();
+          this.$refs.table.setCurrentRow(field);
+        }
+      },
       fetchTable(id) {
         console.log(`fetchTable(${id})`);
         this.isLoadingTable = true;
-        API.getTableById({id: id}).then(res => {
-          this.isLoadingTable = false;
-          this.table_metas = extend({}, res.tableInfo);
-          this.table_basic_info = res.fieldList;
-          this.authed_people = res.peopleList;
-        }, err => {
-          console.error(`err: `, err);
-          this.$notify({
-            message: `${err}`,
-            type: 'error',
-            duration: 0
-          });
-          this.isLoadingTable = false;
-        });
+        API.getTableById({ id: id }).then(
+          res => {
+            this.isLoadingTable = false;
+            this.table_metas = extend({}, res.tableInfo);
+            this.table_basic_info = res.fieldList;
+            this.authed_people = res.peopleList;
+          },
+          err => {
+            console.error(`err: `, err);
+            this.$notify({
+              message: `${err}`,
+              type: "error",
+              duration: 0
+            });
+            this.isLoadingTable = false;
+          }
+        );
       },
       handleTabClick(tab, event) {
         console.log(tab, event);
       },
       handleCurrentRowChangeBasicInfo(row) {
-        console.log('handleCurrentRowChangeBasicInfo() : ', JSON.stringify(row));
+        console.log("点击单行() : ", JSON.stringify(row));
         if (this.dialog_edit_field_visible) {
           return false;
         }
         this.form_edit_field = extend({}, row);
-        return this.dialog_edit_field_visible = true;
+        return (this.dialog_edit_field_visible = true);
       },
       handleCloseEditField() {
-
       },
       handleDelTag(tag) {
         this.dynamicTags.splice(this.dynamicTags.indexOf(tag), 1);
@@ -260,26 +303,26 @@
       },
       handleNewTagInput() {
         // this.table_metas.tags
-        if (this.form_edit_tags.new_tag !== '') {
-          let arr = this.table_metas.tags.split(',');
+        if (this.form_edit_tags.new_tag !== "") {
+          let arr = this.table_metas.tags.split(",");
           arr.push(this.form_edit_tags.new_tag);
-          this.table_metas.tags = arr.join(',');
+          this.table_metas.tags = arr.join(",");
         }
-        this.form_edit_tags.new_tag = '';
-        return this.dialog_edit_tags_visible = false;
+        this.form_edit_tags.new_tag = "";
+        return (this.dialog_edit_tags_visible = false);
       },
       openFormAddTags() {
         if (this.dialog_edit_tags_visible) {
           return false;
         }
-        this.form_edit_tags.new_tag = '';
-        return this.dialog_edit_tags_visible = true;
+        this.form_edit_tags.new_tag = "";
+        return (this.dialog_edit_tags_visible = true);
       },
       checkOrX(v) {
-        return Number(v) === 0 ? '✕' : '✓';
+        return Number(v) === 0 ? "✕" : "✓";
       }
     }
-  }
+  };
 </script>
 
 <style lang="stylus" scoped>
@@ -310,7 +353,10 @@
     .table-metas
         display flex
         width 100%
-        height 120px
+        height 121px
+        border 1px solid #dcdfe6
+        border-bottom none
+
         > div {
             display flex
             height 100%
@@ -345,6 +391,7 @@
                 font-size 14px
                 width 100px
                 min-width 85px
+                padding-left .5em
                 font-weight bold
 
         .entry:nth-child(7),
@@ -370,9 +417,9 @@
             max-height 30px
 
         .tags-title
-            padding-right 5px
+            padding-left .5em
             line-height 40px
-            width 100px
+            width 85px
             color #1d1d1b
             font-size 14px
             font-weight bold

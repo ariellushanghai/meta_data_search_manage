@@ -20,7 +20,7 @@
     "clipboard": "^1.7.1",
     "date-fns": "^2.0.0-alpha.7",
     "echarts": "^4.0.4",
-    "element-ui": "^2.3.0",
+    "element-ui": "^2.3.2",
     "filesize": "^3.6.1",
     "lodash": "^4.17.5",
     "material-design-icons": "^3.0.1",
