@@ -1,17 +1,24 @@
 <template lang="pug">
-    el-row.row(type='flex')
-        el-col.title(:sm='logo_cols_small', :md='logo_cols_small', :lg='5', :xl='5')
+    .row
+        .title
             router-link.link.col(:to="{path: '/'}")
                 img.logo(:src='small_logo_file')
-            |
-            .title-text 元数据管理
         |
-        el-col(:sm='15', :md='15', :lg='16', :xl='16')
-            el-menu(mode='horizontal', background-color='#333644', text-color='#fff', active-text-color='#FF6600', :default-active='defaultActive', :router='true')
-                el-menu-item(v-for='menu in menuItems', :index="'/' + menu.route", :key='menu.route', :disabled='menu.disabled')
-                    | {{menu.display_name}}
+        .title-text(v-show='!flag_show_search_input') 元数据管理
         |
-        el-col.col-user(:span='3')
+        transition(name="fade")
+            .search-input(v-show='flag_show_search_input')
+                el-input(placeholder='请输入内容', v-model.trim='inputSearch', @keyup.enter.native="search", size='medium', :clearable='true')
+                    el-button(slot='append' type='primary' icon='el-icon-search' size='medium', @click='search')
+                        | 搜索
+        |
+        el-menu.menu(mode='horizontal', background-color='#333644', text-color='#fff', active-text-color='#FF6600', :default-active='defaultActive', :router='true')
+            el-menu-item(v-for='menu in menuItems', :index="'/' + menu.route", :key='menu.route', :disabled='menu.disabled')
+                | {{menu.display_name}}
+        |
+        .white-space
+        |
+        .col-user
             el-dropdown(@command='handleCommand', placement='bottom')
                 el-button.btn-user(type='text')
                     | {{userName}}
@@ -27,15 +34,14 @@
 
   import { extend, isNil } from "lodash";
   import API from "@/service/api";
-  // import big_logo_file from '@/assets/images/logo.jpg'
   import small_logo_file from "@/assets/images/logo_ping_an_bank.jpg";
 
   export default {
     name: "GlobalHeader",
     data() {
       return {
-        // big_logo_file,
-        small_logo_file
+        small_logo_file,
+        flag_show_search_input: false
       };
     },
     computed: {
@@ -69,11 +75,8 @@
       userName() {
         return this.$store.getters.user_name;
       },
-      logo_cols_small() {
-        return this.$store.getters.at_meta_page ? 6 : 8;
-      },
-      logo_cols_big() {
-        return this.$store.getters.at_meta_page ? 5 : 8;
+      inputSearch() {
+        return this.$store.getters.seach_word;
       }
     },
     mounted() {
@@ -83,11 +86,18 @@
         console.log(`<GlobalHeader/> watches $route`);
         console.log(`to: `, to, `, from: `, from);
         if (to.name === "meta") {
-
+          this.flag_show_search_input = false;
+        } else {
+          this.flag_show_search_input = true;
         }
       }
     },
     methods: {
+      search() {
+        this.$store.commit("SAVE_USER_INPUT_SEARCH", {
+          seach_word: this.input_search.trim()
+        });
+      },
       logOut() {
         return API.logOut().then(res => {
           console.log(`logout success!!`);
@@ -117,52 +127,58 @@
         opacity 0
 
     .row
+        display flex
         height 100%
         background-color #333644
         color #fff
 
-    .col
-        height 100%
-        background-color #35495e
+        .menu
+            flex-shrink 0
 
-    .link
-        display flex
-        justify-content space-around
-        align-items center
-        background-color ping_an-orange
-        user-select none
-        width 133px
-        height 100%
+        .white-space
+            flex-grow 1
 
-    .logo
-        display block
-        flex-grow 0
-        flex-shrink 0
-        width 100%
-        height auto
-        max-height header-height
+        .col
+            height 100%
+            background-color #35495e
 
-    .title
-        display flex
-        justify-content left
-        line-height header-height
-        text-align center
-        background-color ping_an-orange
-        font-size 20px
-        font-weight bold
-        color #fff
-        user-select none
+        .link
+            display flex
+            justify-content space-around
+            align-items center
+            background-color ping_an-orange
+            user-select none
+            width 133px
+            height 100%
 
-    .title-text
-        flex-grow 1
-        padding 0 20px
-        text-align center
-        letter-spacing .1em
+        .logo
+            display block
+            flex-grow 0
+            flex-shrink 0
+            width 100%
+            height auto
+            max-height header-height
 
-    .col-user
-        display flex
-        align-items center
-        justify-content center
+        .title, .title-text
+            display flex
+            justify-content left
+            line-height header-height
+            text-align center
+            background-color ping_an-orange
+            font-size 20px
+            font-weight bold
+            color #fff
+            user-select none
+
+        .title-text
+            padding 0 20px
+            text-align center
+            letter-spacing .1em
+
+        .col-user
+            display flex
+            align-items center
+            justify-content center
 
     .btn-user
         color #fff
@@ -170,4 +186,24 @@
     .btn-user:hover
         color rgb(234, 85, 5)
 
+    .search-input
+        display flex
+        justify-content center
+        align-items center
+        padding 0 20px
+
+        /deep/ .el-input
+            width 300px
+            margin 0 auto
+
+            /deep/ .el-button--primary
+                color #fff
+                background-color #409EFF
+                border 1px solid #409EFF
+                border-top-left-radius 0
+                border-bottom-left-radius 0
+
+            /deep/ .el-input-group__append
+                border 1px solid transparent
+                background-color #409eff
 </style>

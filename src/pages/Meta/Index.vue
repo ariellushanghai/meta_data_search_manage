@@ -90,6 +90,9 @@
     },
     methods: {
       search() {
+        this.$store.commit("SAVE_USER_INPUT_SEARCH", {
+          seach_word: this.input_search.trim()
+        });
         if (this.input_search === "") {
           if (isEmpty(this.hive_db)) {
             return this.fetchHiveDBList().then(res => {
