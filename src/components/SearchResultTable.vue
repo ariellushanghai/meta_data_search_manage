@@ -41,7 +41,7 @@
                                 | {{"表数量: " + item.cnt}}
                             |
                             span.count(v-if='item.type === "table"')
-                                | {{'字段数量: ' + item.cnt}}
+                                | {{"字段数量: " + item.cnt}}
 
                     |
                     .content {{item.descr}}
@@ -202,6 +202,7 @@
                     /deep/ .el-radio-button__inner
                         width 100%
                         border-radius 0
+                        user-select none
 
                         /deep/ img
                             display inline-block

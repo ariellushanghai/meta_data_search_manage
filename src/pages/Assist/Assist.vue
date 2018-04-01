@@ -272,12 +272,6 @@
     },
     mounted() {
       console.log(`功能服务 mounted()`);
-      this.$store.commit('ENTER_META_PAGE');
-      // window.onresize = debounce(() => {
-      //   this.table_height = this.resizeHandler();
-      // }, 500);
-      // this.triggerResize();
-      // return this.fetchData();
     },
     beforeDestroy: function () {
       window.onresize = undefined;

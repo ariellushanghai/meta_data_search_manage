@@ -107,6 +107,7 @@
   import icon_person from "@/assets/images/ic_person_outline_24px.svg";
   import {
     extend,
+    filter,
     map,
     assign,
     pick,
@@ -223,7 +224,7 @@
       },
       tableMetaTags() {
         if (this.table_metas.tags && this.table_metas.tags !== "") {
-          return this.table_metas.tags.split(",");
+          return filter(this.table_metas.tags.split(","), length);
         }
         return [];
       }
@@ -263,20 +264,23 @@
           this.$refs.table.setCurrentRow(field);
         }
       },
-      fetchTable(id) {
-        console.log(`fetchTable(${id})`);
+      fetchTable(table_id) {
+        console.log(`fetchTable(${table_id})`);
+        if (!table_id || Number(table_id) === 0) {
+          return false;
+        }
         this.isLoadingTable = true;
-        API.getTableById({ id: id }).then(
+        API.getTableById(table_id).then(
           res => {
             this.isLoadingTable = false;
             this.table_metas = extend({}, res.tableInfo);
-            this.table_basic_info = res.fieldList;
+            this.table_basic_info = res.fieldList.list;
             this.authed_people = res.peopleList;
           },
           err => {
             console.error(`err: `, err);
             this.$notify({
-              message: `${err}`,
+              message: `${err.errmsg}`,
               type: "error",
               duration: 0
             });

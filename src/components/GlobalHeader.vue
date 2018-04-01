@@ -25,91 +25,91 @@
 <script>
   // @flow
 
-  import {extend, isNil} from 'lodash'
-  import API from '@/service/api'
+  import { extend, isNil } from "lodash";
+  import API from "@/service/api";
   // import big_logo_file from '@/assets/images/logo.jpg'
-  import small_logo_file from '@/assets/images/logo_ping_an_bank.jpg'
+  import small_logo_file from "@/assets/images/logo_ping_an_bank.jpg";
 
   export default {
-    name: 'GlobalHeader',
+    name: "GlobalHeader",
     data() {
       return {
         // big_logo_file,
         small_logo_file
-      }
+      };
     },
     computed: {
       defaultActive() {
         if (/^\/meta\//.exec(this.$route.path)) {
-          return '/meta'
+          return "/meta";
         }
         return this.$route.path;
       },
       menuItems() {
-        // return this.$store.getters.global_menu;
         return [
           {
-            display_name: '元数据管理',
-            route: 'meta',
+            display_name: "元数据管理",
+            route: "meta",
             disabled: false
           }, {
-            display_name: '辅助分析',
-            route: 'assist',
-            disabled: false
-          }, {
-            display_name: '事件管理',
-            route: 'event',
+            display_name: "辅助分析",
+            route: "assist",
             disabled: true
           }, {
-            display_name: '权限管理',
-            route: 'privilege',
+            display_name: "事件管理",
+            route: "event",
+            disabled: true
+          }, {
+            display_name: "权限管理",
+            route: "privilege",
             disabled: true
           }
-        ]
+        ];
       },
       userName() {
         return this.$store.getters.user_name;
       },
-      flag_at_meta_page() {
-        return this.$store.getters.at_meta_page;
-      },
       logo_cols_small() {
-        return this.$store.getters.at_meta_page ? 6 : 8
+        return this.$store.getters.at_meta_page ? 6 : 8;
       },
       logo_cols_big() {
-        return this.$store.getters.at_meta_page ? 5 : 8
+        return this.$store.getters.at_meta_page ? 5 : 8;
       }
     },
     mounted() {
-      // this.fetchMenu();
+    },
+    watch: {
+      "$route"(to, from) {
+        console.log(`<GlobalHeader/> watches $route`);
+        console.log(`to: `, to, `, from: `, from);
+        if (to.name === "meta") {
+
+        }
+      }
     },
     methods: {
-      fetchMenu() {
-        return API.getMenus().then(res => {
-          console.log(`fetchMenu() success!!`);
-          this.$store.commit('SAVE_USER_INFO', res);
-          // return this.$router.push({name: 'index'})
-        });
-      },
       logOut() {
         return API.logOut().then(res => {
           console.log(`logout success!!`);
-          this.$store.commit('LOGOUT');
-          return this.$router.replace({name: 'login'})
+          this.$store.commit("LOGOUT");
+          return this.$router.replace({ name: "login" });
         });
       },
       handleCommand(command) {
-        if (command === 'logout') {
+        if (command === "logout") {
           return this.logOut();
         }
       }
     }
-  }
+  };
 </script>
 
 <style lang="stylus" scoped>
     header-height = 60px
     ping_an-orange = #FF6600
+
+    .el-menu-item
+        user-select none
 
     .invisiable
         visibility hidden

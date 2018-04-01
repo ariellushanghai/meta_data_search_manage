@@ -49,54 +49,6 @@
         "createTime": 1520352000000,
         "modifier": "修改人",
         "modifyTime": 1521257888175
-      },
-      {
-        "id": "4",
-        "name": "riskdw_4",
-        "descr": "描述信息",
-        "tableCnt": null,
-        "dbAdmin": "riskdw_admin",
-        "sasPermissionAdmin": "fdaf",
-        "creator": "admin",
-        "createTime": 1520352000000,
-        "modifier": "修改人",
-        "modifyTime": 1521257888175
-      },
-      {
-        "id": "4",
-        "name": "riskdw_4",
-        "descr": "描述信息",
-        "tableCnt": null,
-        "dbAdmin": "riskdw_admin",
-        "sasPermissionAdmin": "fdaf",
-        "creator": "admin",
-        "createTime": 1520352000000,
-        "modifier": "修改人",
-        "modifyTime": 1521257888175
-      },
-      {
-        "id": "4",
-        "name": "riskdw_4",
-        "descr": "描述信息",
-        "tableCnt": null,
-        "dbAdmin": "riskdw_admin",
-        "sasPermissionAdmin": "fdaf",
-        "creator": "admin",
-        "createTime": 1520352000000,
-        "modifier": "修改人",
-        "modifyTime": 1521257888175
-      },
-      {
-        "id": "4",
-        "name": "riskdw_4",
-        "descr": "描述信息",
-        "tableCnt": null,
-        "dbAdmin": "riskdw_admin",
-        "sasPermissionAdmin": "fdaf",
-        "creator": "admin",
-        "createTime": 1520352000000,
-        "modifier": "修改人",
-        "modifyTime": 1521257888175
       }
     ],
     "TABLETOTAL": 54,

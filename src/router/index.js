@@ -1,13 +1,13 @@
-import Router from 'vue-router'
-import store from '@/store/'
+import Router from "vue-router";
+import store from "@/store/";
 
 // 元数据管理模块
-const Meta = r => require(['@/pages/Meta/Meta.vue'], r); // 容器
-const MetaIndex = r => require(['@/pages/Meta/Index.vue'], r); // 未搜索时的首页
-const SearchResult = r => require(['@/pages/Meta/SearchResult.vue'], r); // 文本搜索
-const BlankSearchResult = r => require(['@/pages/Meta/BlankSearchResult.vue'], r); // 搜索未匹配
+const Meta = r => require(["@/pages/Meta/Meta.vue"], r); // 容器
+const MetaIndex = r => require(["@/pages/Meta/Index.vue"], r); // 未搜索时的首页
+const SearchResult = r => require(["@/pages/Meta/SearchResult.vue"], r); // 文本搜索
+const BlankSearchResult = r => require(["@/pages/Meta/BlankSearchResult.vue"], r); // 搜索未匹配
 // 辅助分析模块
-const Assist = r => require(['@/pages/Assist/Assist.vue'], r);
+const Assist = r => require(["@/pages/Assist/Assist.vue"], r);
 // 事件管理模块
 // 权限管理模块
 
@@ -15,63 +15,39 @@ const Assist = r => require(['@/pages/Assist/Assist.vue'], r);
 const router = new Router({
   routes: [
     {
-      name: 'index',
+      name: "index",
       redirect: {
-        path: '/meta'
+        path: "/meta"
       },
-      path: '/'
+      path: "/"
     },
     {
-      path: '/meta',
+      path: "/meta",
       component: Meta,
       children: [
         {
-          path: '',
+          name: "meta",
+          path: "",
           component: MetaIndex
         },
         {
-          name: 'blanksearchresult',
-          path: 'blank_search/:db',
+          name: "blanksearchresult",
+          path: "blank_search/:db",
           component: BlankSearchResult
         },
         {
-          name: 'searchresult',
-          path: 'search/',
+          name: "searchresult",
+          path: "search/",
           component: SearchResult
         }
       ]
     },
     {
-      name: 'assist',
-      path: '/assist',
+      name: "assist",
+      path: "/assist",
       component: Assist
     }
   ]
 });
 
-// router.beforeEach((to, from, next) => {
-//   console.log(`router.beforeEach(to: `, to, ` from: `, from);
-//   return next();
-//   // this.$store.commit('ENTER_META_PAGE');
-//   // if (store.getters.user_name) {
-//   //   return next();
-//   // } else {
-//   //   return next({
-//   //     name: 'login'
-//   //   });
-//   // }
-// });
-
-// router.afterEach((to, from) => {
-//   console.log(`router.afterEach(to: `, to, ` from: `, from);
-//   // this.$store.commit('ENTER_META_PAGE');
-//   // if (store.getters.user_name) {
-//   //   return next();
-//   // } else {
-//   //   return next({
-//   //     name: 'login'
-//   //   });
-//   // }
-// })
-
-export default router
+export default router;

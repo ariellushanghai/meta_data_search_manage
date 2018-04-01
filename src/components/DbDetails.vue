@@ -72,12 +72,12 @@
     },
     mounted() {
       console.log(`<DbDetails/> mounted()`);
-      this.getHiveDbById(this.db_id);
+      this.getHiveById(this.db_id);
 
     },
     activated: function() {
       console.log(`<DbDetails/> activated()`);
-      this.getHiveDbById(this.db_id);
+      this.getHiveById(this.db_id);
     },
     deactivated: function() {
       console.log(`<DbDetails/> deactivated()`);
@@ -87,13 +87,13 @@
         console.log(`select_table() val: => `, val);
         return this.$emit("select_table", val.id);
       },
-      getHiveDbById(db_id) {
-        console.log(`getHiveDbById(${db_id})`);
+      getHiveById(db_id) {
+        console.log(`getHiveById(${db_id})`);
         this.isLoadingData = true;
-        return API.getHiveDbById({ db_id: db_id }).then(res => {
+        return API.getHiveById({ db_id: db_id }).then(res => {
           this.isLoadingData = false;
           this.db_info = res.DB_INFO;
-          this.table_list = res.tableList;
+          this.table_list = res.tableList.list;
         }, err => {
           console.error(`err: `, err);
           this.$notify({

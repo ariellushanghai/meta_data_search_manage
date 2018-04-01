@@ -9,18 +9,18 @@
 
 <script>
 
-  import GlobalHeader from '@/components/GlobalHeader'
+  import GlobalHeader from "@/components/GlobalHeader";
 
   export default {
-    name: 'app',
+    name: "app",
     metaInfo: {
-      title: '元数据搜索',
-      titleTemplate: '%s-'
+      title: "元数据搜索",
+      titleTemplate: "%s-"
     },
     components: {
       GlobalHeader
     }
-  }
+  };
 </script>
 
 <style lang="stylus" scoped>

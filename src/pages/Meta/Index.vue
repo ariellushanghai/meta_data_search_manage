@@ -9,7 +9,7 @@
             .tabbed-table
                 el-tabs(v-model='activeTabName', @tab-click='handleTabClick' type='border-card')
                     el-tab-pane(label='Hive' name='hive')
-                        el-table(:data="tableData", size="small", :fit="true", :stripe="true")
+                        el-table(:data="tableData", size="small", height="100%", :fit="true", :stripe="true")
                             el-table-column(prop='id', label="ID", min-width="50")
                             el-table-column(prop='name', label="库名", min-width="100")
                             el-table-column(prop='descr', label="描述", min-width="100")
@@ -30,33 +30,33 @@
 
 <script>
   // @flow
-  import API from '@/service/api'
+  import API from "@/service/api";
   import ElContainer from "element-ui/packages/container/src/main";
   import ElMain from "element-ui/packages/main/src/main";
-  import {isEmpty, map, assign} from 'lodash'
-  import format from 'date-fns/format'
+  import { isEmpty, map, assign } from "lodash";
+  import format from "date-fns/format";
 
-  const zh_cn = require('date-fns/locale/zh-CN');
+  const zh_cn = require("date-fns/locale/zh-CN");
 
   export default {
     components: {
       ElMain,
       ElContainer
     },
-    name: 'MetaIndex',
+    name: "MetaIndex",
     metaInfo: {
-      titleTemplate: '%s-元数据管理'
+      titleTemplate: "%s-元数据管理"
     },
     data() {
       return {
-        input_search: '',
+        input_search: "",
         isSearching: false,
-        activeTabName: 'hive',
+        activeTabName: "hive",
         pageNum: 1,
         total: 10, // 表格总条目数
         table_data: [],
         hive_db: {}
-      }
+      };
     },
     computed: {
       tableData() {
@@ -64,25 +64,25 @@
           return assign(row, {
             "createTime": format(
               new Date(row.createTime),
-              'YYYY[年]MMMD[日]Ah[点]mm[分]',
-              {locale: zh_cn}
+              "YYYY[年]MMMD[日]Ah[点]mm[分]",
+              { locale: zh_cn }
             ),
             "modifyTime": format(
               new Date(row.modifyTime),
-              'YYYY[年]MMMD[日]Ah[点]mm[分]',
-              {locale: zh_cn}
+              "YYYY[年]MMMD[日]Ah[点]mm[分]",
+              { locale: zh_cn }
             )
-          })
+          });
         });
       }
     },
     mounted() {
       console.log(`MetaIndex.vue mounted()`);
-      document.querySelector('#input_search').focus();
+      document.querySelector("#input_search").focus();
       this.fetchIndexData();
       // 后台获取Hive DB列表，当空白搜索时直接跳去首条DB
       this.fetchHiveDBList().then(res => {
-        console.log(`getHiveDBList res: `, res);
+        // console.log(`getHiveList res: `, res);
         this.hive_db = res;
       }, err => {
         console.error(`err: `, err);
@@ -90,38 +90,40 @@
     },
     methods: {
       search() {
-        if (this.input_search === '') {
+        if (this.input_search === "") {
           if (isEmpty(this.hive_db)) {
             return this.fetchHiveDBList().then(res => {
-              console.log(`getHiveDBList res: `, res);
+              console.log(`getHiveList res: `, res);
               this.hive_db = res;
-              return this.$router.push({name: 'blanksearchresult', params: {db: this.hive_db.dbList[0].id}});
+              return this.$router.push({ name: "blanksearchresult", params: { db: this.hive_db.dbList[0].id } });
+            }, err => {
+              console.error(`err: `, err);
             });
           } else {
-            return this.$router.push({name: 'blanksearchresult', params: {db: this.hive_db.dbList[0].id}});
+            return this.$router.push({ name: "blanksearchresult", params: { db: this.hive_db.dbList[0].id } });
           }
         } else {
           return this.$router.push({
-            name: 'searchresult',
+            name: "searchresult",
             query: {
               keyword: this.input_search,
-              type: 'all'
+              type: "all"
             }
           });
         }
       },
       fetchIndexData() {
         let loading = this.$loading({
-          target: '.tabbed-table',
+          target: ".tabbed-table",
           lock: true,
-          text: '正在获取数据。。。',
-          background: 'rgba(255,255,255,0.3)'
+          text: "正在获取数据。。。",
+          background: "rgba(255,255,255,0.3)"
         });
         return API.getIndexData({
           pageNum: Number(this.pageNum),
           total: Number(this.page_size)
         }).then(res => {
-          console.log(`res: `, res);
+          // console.log(`res: `, res);
           this.table_data = res.dbList.list;
           // this.total = Number(res.total);
           loading.close();
@@ -129,16 +131,15 @@
           console.error(`err: `, err);
           loading.close();
           this.$notify({
-            message: `${err.errmsg} : ${err.tipmsg}`,
-            type: 'error',
+            message: `${err.errmsg}`,
+            type: "error",
             duration: 0
           });
-          // window.onresize();
         });
       },
       // 获取Hive DB列表
       fetchHiveDBList() {
-        return API.getHiveDBList({});
+        return API.getHiveList({});
       },
       handleTabClick(tab, event) {
         console.log(tab, event);
@@ -154,7 +155,7 @@
         // return this.fetchData();
       }
     }
-  }
+  };
 </script>
 
 <style lang="stylus" scoped>
@@ -186,12 +187,26 @@
                 border-bottom-left-radius 0
 
     .tabbed-table
-        /*flex-grow 1*/
         height calc(100% - 150px)
+
         /deep/ .el-tabs
             height 100%
-            max-height 100%
             overflow hidden
+
+        /deep/ .el-tabs__content
+            width 100%
+            height calc(100% - 40px)
+            padding 0
+            overflow hidden
+
+        /deep/ .el-tab-pane
+            overflow hidden
+            height 100%
+
+        /deep/ .el-table
+            height 100%
+            overflow-y auto
+            scroll-behavior smooth
 
     .pagination
         display flex

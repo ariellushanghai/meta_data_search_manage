@@ -1,109 +1,135 @@
 <template lang="pug">
     .db-table-tree-menu
         .dbs
-            el-table(:data='db_list', @current-change='handleDbListCurrentRowChange', :highlight-current-row='true', :show-header='false', size='mini')
+            el-table(ref="hiveList", :data='hives.list', row-key='id', @current-change='handleSelectHive', :empty-text='hives.placeholder_of_empty_list', :highlight-current-row='true', :show-header='false', size='mini')
                 el-table-column(:show-overflow-tooltip='true')
                     template(slot-scope='scope')
-                        img(:src='icon_db')
+                        img(:src='hives.icon')
                         span(style='font-size: 14px;') {{scope.row.name}}
         |
         .tables
             .text-filter
-                el-input(placeholder='过滤表格名', v-model='text_filter_for_tables', :clearable='true', :fit='true', size='mini')
+                el-input(placeholder='过滤表格名', v-model='tables.name_filter', :clearable='true', :fit='true', size='mini')
                     img(slot='prefix')
             |
             .list
-                el-table(:data='currentTableList', @current-change='handleTableListCurrentRowChange', :highlight-current-row='true', :show-header='false', size='mini')
+                el-table(:data='tableList', @current-change='handleSelectTable', :empty-text='tables.placeholder_of_empty_list', :highlight-current-row='true', :show-header='false', size='mini')
                     el-table-column(:show-overflow-tooltip='true')
                         template(slot-scope='scope')
-                            img(:src='icon_table')
+                            img(:src='tables.icon')
                             span(style='font-size: 14px;') {{scope.row.tableName}}
 
 </template>
 
 <script>
-  import API from '@/service/api'
-  import icon_db from '@/assets/images/icon_db.png'
-  import icon_table from '@/assets/images/icon_table.png'
-  import icon_arrow_forward from '@/assets/images/ic_arrow_forward_black_48dp.png'
-  import {filter, debounce} from 'lodash'
+  import API from "@/service/api";
+  import icon_db from "@/assets/images/icon_db.png";
+  import icon_table from "@/assets/images/icon_table.png";
+  import { isEmpty, find } from "lodash";
 
   export default {
     name: "DbTableTreeMenu",
-    props: [],
+    props: ["db_id"],
     data() {
       return {
-        icon_db,
-        icon_table,
-        icon_arrow_forward,
-        isLoadingDbList: false,
-        isLoadingTableList: false,
-        db_list: [],
-        current_table_list: [],
-        text_filter_for_tables: ''
+        hives: {
+          icon: icon_db,
+          is_loading: false,
+          list: [],
+          placeholder_of_empty_list: "",
+          selected: null
+        },
+        tables: {
+          icon: icon_table,
+          is_loading: false,
+          list: [],
+          placeholder_of_empty_list: "",
+          name_filter: ""
+        }
       };
     },
     computed: {
-      currentTableList() {
-        return this.current_table_list.filter((table) => table.tableName.toLowerCase().includes(String(this.text_filter_for_tables).toLowerCase()))
+      tableList() {
+        return this.tables.list.filter((table) => table.tableName.toLowerCase().includes(String(this.tables.name_filter).toLowerCase()));
       }
     },
-    mounted() {
-      this.fetchHiveDbList();
-
+    watch: {
+      // db_id(id) {
+      //   console.log(`watch: db_id changed: ${id}`);
+      //   if (id && Number(id) !== 0) {
+      //     return this.setUpUI();
+      //   }
+      // }
     },
-    beforeDestroy: function () {
-
+    mounted() {
+      console.log(`<DbTableTreeMenu/> mounted, this.db_id: ${this.db_id}`);
+      this.getHiveList();
     },
     methods: {
-      fetchHiveDbList() {
-        console.log('fetchHiveDbList()');
-        this.isLoadingDbList = true;
-        API.getHiveDBList({}).then(res => {
-          this.isLoadingDbList = false;
-          this.db_list = res.dbList;
+      setUpUI() {
+        this.hives.selected = find(this.hives.list, (hive) => {
+          return Number(hive.id) === Number(this.db_id);
+        });
+        console.log(`setUpUI() : `, this.hives.selected);
+        if (this.db_id && Number(this.db_id) !== 0) {
+          this.$refs.hiveList.setCurrentRow(this.hives.selected);
+        }
+      },
+      getHiveList() {
+        console.log("<DbTableTreeMenu/>.getHiveList()");
+        this.hives.is_loading = true;
+        API.getHiveList({}).then(res => {
+          this.hives.is_loading = false;
+          this.hives.list = res.dbList;
+          this.$nextTick(() => {
+            this.setUpUI();
+          });
         }, err => {
           console.error(`err: `, err);
           this.$notify({
-            message: `${err}`,
-            type: 'error',
+            message: `${err.errmsg}`,
+            type: "error",
             duration: 0
           });
-          this.isLoadingDbList = false;
+          this.hives.is_loading = false;
         });
       },
-      handleDbListCurrentRowChange(val) {
-        console.log(`handleDbListCurrentRowChange() val: => `, val);
-        if (this.isLoadingTableList) {
+      handleSelectHive(val, oldVal) {
+        console.log(`handleSelectHive() val: => `, val, `, oldVal: => `, oldVal);
+        if (this.tables.is_loading || isEmpty(val) || Number(val.id) === 0) {
           return false;
         }
-        return this.getHiveDbById(val.id);
+        this.hives.selected = val;
+        return this.getHiveById(val.id);
       },
-      handleTableListCurrentRowChange(val) {
+      handleSelectTable(val) {
         console.log(`select_table() val: => `, val);
-        if (this.isLoadingTableList) {
+        if (this.tables.is_loading) {
           return false;
         }
-        return this.$emit('select_table', val.id);
+        return this.$emit("select_table", val.id);
       },
-      getHiveDbById(db_id) {
-        console.log('getHiveDbById()');
-        this.isLoadingTableList = true;
-        return API.getHiveDbById({db_id: db_id}).then(res => {
-          this.isLoadingTableList = false;
-          this.current_table_list = res.tableList;
+      getHiveById(db_id) {
+        console.log(`<DbTableTreeMenu/>.getHiveById(${db_id})`);
+        if (Number(db_id) === 0) {
+          return false;
+        }
+        this.tables.is_loading = true;
+        return API.getHiveById(db_id).then(res => {
+          this.tables.is_loading = false;
+          this.tables.list = res.tableList.list;
         }, err => {
           console.error(`err: `, err);
           this.$notify({
-            message: `${err}`,
-            type: 'error',
+            message: `${err.errmsg}`,
+            type: "error",
             duration: 0
           });
-          this.isLoadingTableList = false;
+          this.tables.is_loading = false;
         });
       }
     }
-  }
+  };
 </script>
 
 <style lang="stylus" scoped>
