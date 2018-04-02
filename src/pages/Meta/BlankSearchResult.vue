@@ -7,8 +7,13 @@
                         .hives-and-tables
                             db-table-tree-menu(:db_id='currentDbId', v-on:select_table='handleSelectTable')
                         |
-                        .selected-table(v-show='selected_table_id !== 0')
-                            table-details(:table_id='selected_table_id')
+                        .selected-table
+                            |
+                            table-details(:table_id='selected_table_id', v-show='selected_table_id')
+                            |
+                            .empty-place-holder(v-show='!selected_table_id')
+                                span ←请选择表
+
                     |
                     el-tab-pane(label='标签系统(暂无)', name='labelsys', :disabled='true') 标签系统系
                     |
@@ -97,4 +102,12 @@
         flex-grow 1
         width 67%
         padding 5px
+
+        .empty-place-holder
+            display flex
+            width 100%
+            height 100%
+            text-align center
+            justify-content center
+            align-items center
 </style>

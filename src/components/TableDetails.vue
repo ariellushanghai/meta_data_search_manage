@@ -59,7 +59,7 @@
             el-tabs(v-model='activeTabName', @tab-click='handleTabClick' type='border-card')
                 el-tab-pane(label='基本信息查询' name='basic_info')
                     el-table.table-basic-info(:data="tableBasicInfo", ref="table", @current-change="handleCurrentRowChangeBasicInfo", :highlight-current-row='true', :border='true', :stripe='true', size='mini')
-                        el-table-column(prop="fieldName", label="字段名称", :sortable="true", :show-overflow-tooltip='true')
+                        el-table-column(prop="fieldName", label="字段名称", :sortable="true", :show-overflow-tooltip='true', min-width='150')
                         el-table-column(prop="isPrimarykey", label="是否主键", :sortable="true", align="center", width='100')
                             template(slot-scope="scope")
                                 span.check(v-if="checkOrX(scope.row.isPrimarykey) === '✓'")
@@ -69,8 +69,8 @@
                         el-table-column(prop="fieldType", label="字段类型", :sortable="true", align="center", width='100')
                         el-table-column(prop="fieldCreateTime", label="创建时间", width="200")
                         el-table-column(prop="fieldUpdateTime", label="更新时间", width="200")
-                        el-table-column(prop="descr", label="字段描述")
-                        el-table-column(prop="statisticsCalibre", label="统计口径", :sortable="true")
+                        el-table-column(prop="descr", label="字段描述", width="100")
+                        el-table-column(prop="statisticsCalibre", label="统计口径", width="100", :sortable="true")
                         el-table-column(prop="isSensitiveInfo", label="敏感信息", :sortable="true", align="center", width='100')
                             template(slot-scope="scope")
                                 span.check(v-if="checkOrX(scope.row.isSensitiveInfo) === '✓'")
@@ -83,7 +83,7 @@
                                     | ✓
                                 span.x(v-if="checkOrX(scope.row.isAllowNull) === '✕'")
                                     | ✕
-                        el-table-column(prop="statisticsCalibre", label="字段码值", :sortable="true")
+                        el-table-column(prop="statisticsCalibre", label="字段码值", :sortable="true", width='100')
 
                 el-tab-pane(label='人员权限查询' name='authed_people')
                     .authed-people
@@ -244,6 +244,9 @@
     watch: {
       table_id(new_id, old_id) {
         console.log(`table_id changed: new_id : `, new_id, `old_id:`, old_id);
+        if (!new_id) {
+          return this.clearUI();
+        }
         if (isNumber(Number(this.table_id)) && Number(this.table_id) !== 0) {
           return this.setUpUI();
         }
@@ -263,6 +266,11 @@
           this.$refs.table.setCurrentRow();
           this.$refs.table.setCurrentRow(field);
         }
+      },
+      clearUI() {
+        this.table_metas = {};
+        this.table_basic_info = [];
+        this.authed_people = [];
       },
       fetchTable(table_id) {
         console.log(`fetchTable(${table_id})`);

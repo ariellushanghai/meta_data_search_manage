@@ -36,14 +36,14 @@
           icon: icon_db,
           is_loading: false,
           list: [],
-          placeholder_of_empty_list: "",
+          placeholder_of_empty_list: "暂无数据",
           selected: null
         },
         tables: {
           icon: icon_table,
           is_loading: false,
           list: [],
-          placeholder_of_empty_list: "",
+          placeholder_of_empty_list: "←请选择Hive库",
           name_filter: ""
         }
       };
@@ -107,6 +107,9 @@
         if (this.tables.is_loading) {
           return false;
         }
+        if (!val) {
+          return false;
+        }
         return this.$emit("select_table", val.id);
       },
       getHiveById(db_id) {
@@ -115,9 +118,18 @@
           return false;
         }
         this.tables.is_loading = true;
+        this.tables.list = [];
+        this.tables.placeholder_of_empty_list = "正在获取数据";
+        this.$emit("select_table", null);
+
         return API.getHiveById(db_id).then(res => {
           this.tables.is_loading = false;
           this.tables.list = res.tableList.list;
+          if (isEmpty(this.tables.list)) {
+            this.tables.placeholder_of_empty_list = "暂无数据";
+          } else {
+            this.tables.placeholder_of_empty_list = "←请选择Hive库";
+          }
         }, err => {
           console.error(`err: `, err);
           this.$notify({
