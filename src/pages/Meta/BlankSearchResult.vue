@@ -54,6 +54,11 @@
         return Number(this.$route.params.db);
       }
     },
+    mounted() {
+      this.$store.commit("SAVE_USER_INPUT_SEARCH", {
+        seach_word: ""
+      });
+    },
     methods: {
       handleSelectTable(table_id) {
         console.log(`handleSelectTable(${table_id})`);

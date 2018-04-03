@@ -9,7 +9,7 @@
             .tabbed-table
                 el-tabs(v-model='activeTabName', @tab-click='handleTabClick' type='border-card')
                     el-tab-pane(label='Hive' name='hive')
-                        el-table(:data="tableData", size="small", height="100%", :fit="true", :stripe="true")
+                        el-table(:data="tableData", @row-click="handleRowClick", size="small", height="100%", :fit="true", :stripe="true")
                             el-table-column(prop='id', label="ID", min-width="50")
                             el-table-column(prop='name', label="库名", min-width="100")
                             el-table-column(prop='descr', label="描述", min-width="100")
@@ -79,6 +79,9 @@
     mounted() {
       console.log(`MetaIndex.vue mounted()`);
       document.querySelector("#input_search").focus();
+      this.$store.commit("SAVE_USER_INPUT_SEARCH", {
+        seach_word: ""
+      });
       this.fetchIndexData();
       // 后台获取Hive DB列表，当空白搜索时直接跳去首条DB
       this.fetchHiveDBList().then(res => {
@@ -109,8 +112,7 @@
           return this.$router.push({
             name: "searchresult",
             query: {
-              keyword: this.input_search,
-              type: "all"
+              keyword: this.input_search
             }
           });
         }
@@ -146,6 +148,14 @@
       },
       handleTabClick(tab, event) {
         console.log(tab, event);
+      },
+      // 表格行点击
+      handleRowClick(row, event, column) {
+        console.log(`handleRowClick() row: `, row);
+        return this.$router.push({
+          name: "blanksearchresult",
+          params: { db: row.id }
+        });
       },
       handleCurrentPageChange(val) {
         console.log(`当前页: ${val}`);
@@ -211,6 +221,9 @@
             height 100%
             overflow-y auto
             scroll-behavior smooth
+
+            tr:hover
+                cursor pointer
 
     .pagination
         display flex

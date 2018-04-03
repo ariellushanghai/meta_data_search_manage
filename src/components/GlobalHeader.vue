@@ -12,7 +12,7 @@
         |
         transition(name="fade")
             .search-input(v-show='flag_show_search_input')
-                el-input(placeholder='请输入内容', v-model.trim='inputSearch', @keyup.enter.native="search", size='medium', :clearable='true')
+                el-input(placeholder='请输入内容', v-model.trim='input_of_search', @keyup.enter.native="search", size='medium', :clearable='true')
                     el-button(slot='append' type='primary' icon='el-icon-search' size='medium', @click='search')
                         | 搜索
         |
@@ -57,6 +57,7 @@
         icon_assist,
         icon_event,
         icon_privilege,
+        input_of_search: "",
         flag_show_search_input: false
       };
     },
@@ -98,24 +99,44 @@
       inputSearch() {
         return this.$store.getters.seach_word;
       }
-    },
-    mounted() {
+      // inputSearch {
+      //   get: function() {
+      //     return this.$store.getters.seach_word;
+      //   },
+      //   set: function(word) {
+      //
+      //   }
+      // }
     },
     watch: {
       "$route"(to, from) {
-        console.log(`<GlobalHeader/> watches $route`);
-        console.log(`to: `, to, `, from: `, from);
-        if (to.name === "meta") {
-          this.flag_show_search_input = false;
-        } else {
-          this.flag_show_search_input = true;
+        // 搜索框展示逻辑
+        this.flag_show_search_input = (to.name === "meta") ? false : true;
+        //
+        if (to.query.keyword && (to.query.keyword !== from.query.keyword)) {
+          console.log(`to: `, to, `, from: `, from);
+          this.$store.commit("SAVE_USER_INPUT_SEARCH", {
+            seach_word: to.query.keyword
+          });
         }
+        this.input_of_search = to.query.keyword;
       }
+    },
+    beforeRouteUpdate(to, from, next) {
+      console.log(`beforeRouteUpdate: to: `, to.query.keyword, `, from: `, from.query.keyword);
+      return next();
     },
     methods: {
       search() {
+        console.log(`this.input_of_search: ${this.input_of_search}`);
         this.$store.commit("SAVE_USER_INPUT_SEARCH", {
-          seach_word: this.input_search.trim()
+          seach_word: this.input_of_search.trim()
+        });
+        return this.$router.push({
+          name: "searchresult",
+          query: {
+            keyword: this.input_of_search.trim()
+          }
         });
       },
       logOut() {

@@ -5,7 +5,7 @@
                 el-tabs(v-model='active_tab_name', @tab-click='handleTabClick' type='border-card')
                     el-tab-pane(label='Hive' name='hive')
                         .search-result-container
-                            search-result-table(:keyword='keyword', v-on:clickOnSearchResult='handleSelectSearchResult')
+                            search-result-table(:keyword='keyword', :type='type', v-on:clickOnSearchResult='handleSelectSearchResult')
                         //- 搜索结果条目对应的详情挂载点: 库，表，字段详情
                         |
                         .result-details
@@ -20,17 +20,12 @@
 
 <script>
   // @flow
-  import API from "@/service/api";
   import SearchResultTable from "@/components/SearchResultTable.vue";
   import DbTableTreeMenu from "@/components/DbTableTreeMenu.vue";
   import DbDetails from "@/components/DbDetails.vue";
   import TableDetails from "@/components/TableDetails.vue";
   import ElContainer from "element-ui/packages/container/src/main";
   import ElMain from "element-ui/packages/main/src/main";
-  import { map, assign } from "lodash";
-  import format from "date-fns/format";
-
-  const zh_cn = require("date-fns/locale/zh-CN");
 
   export default {
     components: {
@@ -62,42 +57,15 @@
         return this.$route.query.type;
       }
     },
-    watch: {
-      "$route"(to, from) {
-        console.log(`$route changed: to : `, to, `from:`, from);
-        if (to.query.keyword !== from.query.keyword) {
-          return this.fetchIndexData();
-        } else if (to.query.type !== from.query.type) {
-          return this.fetchIndexData();
-        } else {
-
-        }
-      }
-    },
-    // beforeRouteEnter(to, from, next) {
-    //   console.log('SearchResult.vue beforeRouteEnter()');
-    //   if (Number(to.params.db) === 0) {
-    //     this.fetchHiveDBList()
-    //   }
-    //   return next();
-    // },
-    created() {
-      if (this.keyword) {
-        this.search();
-      }
-    },
-    mounted() {
-      console.log(`匹配${this.$route.query.keyword}搜索结果 mounted()`);
-      this.current_db_id = this.$route.params;
+    beforeRouteUpdate(to, from, next) {
+      console.log(`beforeRouteUpdate: to: `, to.query.keyword, `, from: `, from.query.keyword);
+      return next();
     },
     methods: {
-      search() {
-        console.log(`search(${this.keyword})`);
-      },
       handleTabClick(tab, event) {
         console.log(tab, event);
       },
-      // 用户点击搜索结果
+      // 用户点击搜索结果 => 切换路由
       handleSelectSearchResult(item) {
         console.log(`handleSelectSearchResult(): `, item);
 

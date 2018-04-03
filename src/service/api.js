@@ -29,6 +29,8 @@ export default {
   },
   // 获取 搜索结果
   getSearchResult(req) {
-    return network.get("/getSearchResult.json");
+    return network.get("/search/keyword", {
+      params: req
+    });
   }
 };

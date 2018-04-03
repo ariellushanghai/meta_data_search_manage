@@ -4,12 +4,9 @@
 
 <script>
   export default {
-    name: 'Meta',
+    name: "Meta",
     metaInfo: {
-      titleTemplate: '%s-元数据管理'
-    },
-    mounted() {
-      console.log(`Meta.vue mounted()`);
+      titleTemplate: "%s-元数据管理"
     }
-  }
+  };
 </script>

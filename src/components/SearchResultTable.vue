@@ -10,6 +10,9 @@
                 |
                 el-radio-button.field(label='字段')
         |
+        .place-holder-of-empty-list(v-if='search_result_list.length === 0')
+            span {{text_place_holder}}
+        |
         .list(v-if='search_result_list.length !== 0')
             .item(v-for='(item, index) in search_result_list', @click='handleSelectSearchResult(item, index)', :key='item.name', v-bind:class="{'highlighted': item.highlight}")
                 .label(:class="item.type")
@@ -52,66 +55,76 @@
 </template>
 
 <script>
-  import API from '@/service/api'
-  import icon_all from '@/assets/images/icon_all.png'
-  import icon_db from '@/assets/images/icon_db.png'
-  import icon_table from '@/assets/images/icon_table.png'
-  import icon_field from '@/assets/images/icon_field.png'
-  import { map, extend } from 'lodash'
+  import API from "@/service/api";
+  import icon_all from "@/assets/images/icon_all.png";
+  import icon_db from "@/assets/images/icon_db.png";
+  import icon_table from "@/assets/images/icon_table.png";
+  import icon_field from "@/assets/images/icon_field.png";
+  import { map, extend } from "lodash";
   import ElTabPane from "element-ui/packages/tabs/src/tab-pane";
 
   export default {
     components: { ElTabPane },
     name: "SearchResultTable",
-    props: ['keyword'],
+    props: ["keyword", "type"],
     data() {
       return {
         icon_all,
         icon_db,
         icon_table,
         icon_field,
-        active_filter: '全部',
+        active_filter: "全部",
         current_page: 1,
         page_total: 0,
-        search_result_list: []
+        search_result_list: [],
+        text_place_holder: "无结果"
       };
     },
     computed: {
-      currentTableList() {
-        return this.current_table_list.filter((table) => table.tableName.toLowerCase().includes(String(this.text_filter_for_tables).toLowerCase()))
-      },
       queryType() {
         return {
-          '全部': 'all',
-          '库': 'db',
-          '表': 'table',
-          '字段': 'field'
+          "全部": "all",
+          "库": "db",
+          "表": "table",
+          "字段": "field"
         }[this.active_filter];
       }
     },
     mounted() {
-      console.log(`ResultItemTable: 'keyword': ${this.keyword}`);
+      console.log(`ResultItemTable: keyword: ${this.keyword}, type: ${this.type}`);
       this.getResultItem();
     },
     watch: {
-      queryType: function(new_type, old_type) {
-
+      keyword: function(new_word) {
+        console.log(`keyword changed: `, new_word);
+        return this.getResultItem();
+      },
+      type: function(new_type) {
+        console.log(`type changed: `, new_type);
       }
     },
     methods: {
       getResultItem() {
         let loading = this.$loading({
-          target: '.search-result-table .el-tabs__content',
+          target: ".search-result-table .el-tabs__content",
           lock: true,
-          text: '正在搜索。。。',
-          background: 'rgba(255,255,255,0.3)'
+          text: "正在搜索。。。",
+          background: "rgba(255,255,255,0.3)"
         });
-        return API.getSearchResult().then(res => {
-          console.log(`getSearchResult() => `, res);
+        this.text_place_holder = "正在搜索。。。";
+        return API.getSearchResult({
+          keyword: this.keyword,
+          type: this.type
+        }).then(res => {
+          this.text_place_holder = "无结果";
+          console.log(`getSearchResult(${JSON.stringify({
+            keyword: this.keyword,
+            type: this.type
+          })}) => `, res);
           this.search_result_list = map(res.list, (item) => {
             return extend(item, {
-              'highlight': false
-            })
+              "highlight": false
+            });
           });
           this.page_total = Number(res.total);
           loading.close();
@@ -120,14 +133,10 @@
           loading.close();
           this.$notify({
             message: `${err.message}`,
-            type: 'error',
+            type: "error",
             duration: 0
           });
         });
-      },
-      // 搜索结果按全部,库,表,字段过滤
-      handleActiveFilterChange() {
-
       },
       // 搜索结果页分页
       handleCurrentPageChange(val) {
@@ -143,19 +152,19 @@
           return elem;
         });
         console.log(`<SearchResultTable/>: clickOnSearchResult: `, item, index);
-        return this.$emit('clickOnSearchResult', item);
+        return this.$emit("clickOnSearchResult", item);
       },
       // 中文转换搜索结果的type
       convertTypeToZh(zh) {
         return {
-          'all': '全部',
-          'db': '库',
-          'table': '表',
-          'field': '字段'
+          "all": "全部",
+          "db": "库",
+          "table": "表",
+          "field": "字段"
         }[zh];
       }
     }
-  }
+  };
 </script>
 
 <style lang="stylus" scoped>
@@ -164,6 +173,7 @@
 
     .search-result-table
         display flex
+        position relative
         flex-direction column
         width 100%
         height 100%
@@ -219,6 +229,16 @@
 
             /deep/ .el-radio-button__inner:hover
                 color ping_an-orange
+
+        .place-holder-of-empty-list
+            display flex
+            width 100%
+            height 100%
+            text-align center
+            justify-content center
+            align-items center
+            color #909399
+            font-size 14px
 
         .list
             width 100%
@@ -351,7 +371,11 @@
                 margin-bottom 0
 
         .pagination-container
+            width 100%
             height 32px
+            position absolute
+            bottom 0
+            left 0
             display flex
             justify-content center
 
