@@ -26,19 +26,18 @@
                         .hierarchy(v-if='item.type === "table"', :style='{width: "25%"}')
                             .box
                                 .db 库
-                                .text {{item.dbName}}
-
+                                .text(v-html='item.highLightDbName || item.dbName')
                         |
                         .hierarchy(v-if='item.type === "field"', :style='{width: "50%"}')
                             .box(:style='{width: "50%"}')
                                 .db 库
-                                .text {{item.dbName}}
+                                .text(v-html='item.highLightDbName || item.dbName')
                             .box(:style='{width: "50%"}')
                                 .table 表
-                                .text {{item.tableName}}
+                                .text(v-html='item.highLightTableName || item.tableName')
                         |
                         .title-container
-                            .title(v-html='item.highLightName')
+                            .title(v-html='item.highLightName || item.name')
                             |
                             span.count(v-if='item.type === "db"')
                                 | {{"表数量: " + item.cnt}}
@@ -121,12 +120,12 @@
             keyword: this.keyword,
             type: this.type
           })}) => `, res);
-          this.search_result_list = map(res.list, (item) => {
+          this.search_result_list = map(res.pageInfo.list, (item) => {
             return extend(item, {
               "highlight": false
             });
           });
-          this.page_total = Number(res.total);
+          this.page_total = Number(res.pageInfo.total);
           loading.close();
         }, err => {
           console.error(`err: `, err);

@@ -62,16 +62,16 @@
       tableData() {
         return map(this.table_data, (row) => {
           return assign(row, {
-            "createTime": format(
+            "createTime": row.createTime ? format(
               new Date(row.createTime),
               "YYYY[年]MMMD[日]Ah[点]mm[分]",
               { locale: zh_cn }
-            ),
-            "modifyTime": format(
+            ) : "无",
+            "modifyTime": row.modifyTime ? format(
               new Date(row.modifyTime),
               "YYYY[年]MMMD[日]Ah[点]mm[分]",
               { locale: zh_cn }
-            )
+            ) : "无"
           });
         });
       }
@@ -150,7 +150,7 @@
         console.log(tab, event);
       },
       // 表格行点击
-      handleRowClick(row, event, column) {
+      handleRowClick(row) {
         console.log(`handleRowClick() row: `, row);
         return this.$router.push({
           name: "blanksearchresult",

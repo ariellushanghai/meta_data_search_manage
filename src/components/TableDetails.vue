@@ -58,7 +58,7 @@
         .table
             el-tabs(v-model='activeTabName', @tab-click='handleTabClick' type='border-card')
                 el-tab-pane(label='基本信息查询' name='basic_info')
-                    el-table.table-basic-info(:data="tableBasicInfo", ref="table", @current-change="handleCurrentRowChangeBasicInfo", :highlight-current-row='true', :border='true', :stripe='true', size='mini')
+                    el-table.table-basic-info(:data="tableBasicInfo", ref="table", @current-change="handleCurrentRowChangeBasicInfo", height="100%", :highlight-current-row='true', :border='true', :stripe='true', size='mini')
                         el-table-column(prop="fieldName", label="字段名称", :sortable="true", :show-overflow-tooltip='true', min-width='150')
                         el-table-column(prop="isPrimarykey", label="是否主键", :sortable="true", align="center", width='100')
                             template(slot-scope="scope")

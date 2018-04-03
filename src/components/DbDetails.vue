@@ -1,17 +1,19 @@
 <template lang="pug">
     .db-details-container
         .db-info
-            el-card(:body-style="{padding:'10px',display: 'flex','justify-content': 'space-between', 'flex-direction': 'column'}")
-                .card-header(slot='header')
-                    img(:src='icon_db')
-                    span 数据库详情
-                |
-                .entry(v-for='entry in dbInfo', :key='entry.display_name')
-                    span.display-name {{entry.display_name + " : "}}
-                    span.value {{entry.value}}
             |
-            .arrow
-                img(:src='icon_arrow_forward')
+            .vertical-middle
+                el-card.card(:body-style="{padding:'10px',display: 'flex','justify-content': 'space-between', 'flex-direction': 'column'}")
+                    .card-header(slot='header')
+                        img(:src='icon_db')
+                        span 数据库详情
+                    |
+                    .entry(v-for='entry in dbInfo', :key='entry.display_name')
+                        span.display-name {{entry.display_name + " : "}}
+                        span.value {{entry.value}}
+                |
+                .arrow
+                    img(:src='icon_arrow_forward')
         |
         .tables
             .text-filter
@@ -19,7 +21,7 @@
                     img(slot='prefix')
             |
             .list
-                el-table(:data='tableList', @current-change='handleTableListCurrentRowChange', :highlight-current-row='true', :show-header='false', size='mini')
+                el-table(:data='tableList', @current-change='handleTableListCurrentRowChange', height='100%', :highlight-current-row='true', :show-header='false', size='mini')
                     el-table-column(:show-overflow-tooltip='true')
                         template(slot-scope='scope')
                             img(:src='icon_table')
@@ -70,17 +72,18 @@
         return this.table_list.filter((table) => table.tableName.toLowerCase().includes(String(this.text_filter_for_tables).toLowerCase()));
       }
     },
+    watch: {
+      db_id(db_id) {
+        return this.getHiveById(db_id);
+      }
+    },
     mounted() {
       console.log(`<DbDetails/> mounted()`);
       this.getHiveById(this.db_id);
-
     },
     activated: function() {
       console.log(`<DbDetails/> activated()`);
       this.getHiveById(this.db_id);
-    },
-    deactivated: function() {
-      console.log(`<DbDetails/> deactivated()`);
     },
     methods: {
       handleTableListCurrentRowChange(val) {
@@ -90,9 +93,9 @@
       getHiveById(db_id) {
         console.log(`getHiveById(${db_id})`);
         this.isLoadingData = true;
-        return API.getHiveById({ db_id: db_id }).then(res => {
+        return API.getHiveById(db_id).then(res => {
           this.isLoadingData = false;
-          this.db_info = res.DB_INFO;
+          this.db_info = res.dbInfo;
           this.table_list = res.tableList.list;
         }, err => {
           console.error(`err: `, err);
@@ -111,7 +114,7 @@
 <style lang="stylus" scoped>
     .db-details-container
         display flex
-        align-items start
+        align-items stretch
         width 100%
         height 100%
         overflow hidden
@@ -200,16 +203,23 @@
         display flex
         align-items start
 
+        .vertical-middle
+            display flex
+            width 100%
+            align-items center
+
+        .card
+            width calc(100% - 50px)
+
         .arrow
-        display flex
-        align-items center
+            display flex
+            align-items center
+            flex-grow 0
 
         img
             width 50px
             height auto
             max-height 100%
-
-
 
     .tables
         flex-grow 1

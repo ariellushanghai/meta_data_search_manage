@@ -68,21 +68,25 @@
       // 用户点击搜索结果 => 切换路由
       handleSelectSearchResult(item) {
         console.log(`handleSelectSearchResult(): `, item);
-
         switch (item.type) {
           case "db":
             console.log("db");
             this.result_details_view = "DbDetails";
             this.selected_db_id = Number(item.id);
+            this.selected_table_id = null;
+            this.selected_field_id = null;
             break;
           case "table":
             this.result_details_view = "TableDetails";
             this.selected_table_id = Number(item.id);
+            this.selected_db_id = null;
+            this.selected_field_id = null;
             break;
           case "field":
             this.result_details_view = "TableDetails";
             this.selected_table_id = Number(item.tableId);
             this.selected_field_id = Number(item.id);
+            this.selected_db_id = null;
             break;
           default:
             console.error(`item.type: ${item.type}`);
