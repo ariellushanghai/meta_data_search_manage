@@ -14,7 +14,7 @@
             span {{text_place_holder}}
         |
         .list(v-if='search_result_list.length !== 0')
-            .item(v-for='(item, index) in search_result_list', @click='handleSelectSearchResult(item, index)', :key='item.name', v-bind:class="{'highlighted': item.highlight}")
+            .item(v-for='(item, index) in search_result_list', @click='handleSelectSearchResult(item, index)', :key='item.type + item.id', v-bind:class="{'highlighted': item.highlight}")
                 .label(:class="item.type")
                     span {{convertTypeToZh(item.type)}}
 
@@ -46,10 +46,10 @@
                                 | {{"字段数量: " + item.cnt}}
 
                     |
-                    .content {{item.descr}}
+                    .content(v-html='item.highLightDescr || item.descr')
         |
         .pagination-container
-            el-pagination(@current-change='handleCurrentPageChange', :current-page.sync='current_page', :page-size='10', layout='total, prev, pager, next', :total='1000', :background='true', :small='true')
+            el-pagination(@current-change='handleCurrentPageChange', :current-page.sync='pageNum', :page-size='pageSize', layout='total, prev, pager, next, jumper', :total='total', :background='true', :small='true')
 
 </template>
 
@@ -73,8 +73,9 @@
         icon_table,
         icon_field,
         active_filter: "全部",
-        current_page: 1,
-        page_total: 0,
+        pageNum: 1,// 当前页
+        pageSize: 10,// 请求分页数
+        total: 0,// 搜索结果总数
         search_result_list: [],
         text_place_holder: "无结果"
       };
@@ -82,7 +83,7 @@
     computed: {
       queryType() {
         return {
-          "全部": "all",
+          "全部": undefined,
           "库": "db",
           "表": "table",
           "字段": "field"
@@ -100,6 +101,7 @@
       },
       type: function(new_type) {
         console.log(`type changed: `, new_type);
+        return this.getResultItem();
       }
     },
     methods: {
@@ -113,25 +115,25 @@
         this.text_place_holder = "正在搜索。。。";
         return API.getSearchResult({
           keyword: this.keyword,
-          type: this.type
+          type: this.queryType
         }).then(res => {
           this.text_place_holder = "无结果";
           console.log(`getSearchResult(${JSON.stringify({
             keyword: this.keyword,
-            type: this.type
+            type: this.queryType
           })}) => `, res);
           this.search_result_list = map(res.pageInfo.list, (item) => {
             return extend(item, {
               "highlight": false
             });
           });
-          this.page_total = Number(res.pageInfo.total);
+          this.total = Number(res.pageInfo.total);
           loading.close();
         }, err => {
-          console.error(`err: `, err);
+          console.error(`err: `, err.errmsg);
           loading.close();
           this.$notify({
-            message: `${err.message}`,
+            message: `${err.errmsg}`,
             type: "error",
             duration: 0
           });
@@ -140,8 +142,8 @@
       // 搜索结果页分页
       handleCurrentPageChange(val) {
         console.log(`当前页: ${val}`);
-        this.current_page = Number(val);
-        // return this.fetchData();
+        this.pageNum = Number(val);
+        return this.getResultItem();
       },
       // 用户点击搜索结果
       handleSelectSearchResult(item, index) {
@@ -177,6 +179,10 @@
         width 100%
         height 100%
         overflow hidden
+
+        /deep/ span.highlight
+            color ping_an-orange
+            font-weight bold
 
         .tabs
             height 36px
@@ -308,10 +314,6 @@
                                 word-break break-all
                                 white-space nowrap
                                 text-transform uppercase
-
-                                /deep/ span.highlight
-                                    color ping_an-orange
-                                    font-weight bold
 
                             span.count
                                 position absolute

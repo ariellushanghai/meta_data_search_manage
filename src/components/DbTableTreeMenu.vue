@@ -85,7 +85,7 @@
             this.setUpUI();
           });
         }, err => {
-          console.error(`err: `, err);
+          console.error(`err: `, err.errmsg);
           this.$notify({
             message: `${err.errmsg}`,
             type: "error",
@@ -131,7 +131,7 @@
             this.tables.placeholder_of_empty_list = "←请选择Hive库";
           }
         }, err => {
-          console.error(`err: `, err);
+          console.error(`err: `, err.errmsg);
           this.$notify({
             message: `${err.errmsg}`,
             type: "error",
@@ -166,8 +166,11 @@
             td
                 border-bottom 1px solid white
 
-            td:hover
+            .el-table__body tr:hover
                 cursor pointer
+
+            .el-table__body tr.current-row:hover
+                cursor default
 
             .el-table__body tr.current-row > td
                 background-color #f60

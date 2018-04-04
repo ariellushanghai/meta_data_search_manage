@@ -1,5 +1,5 @@
 <template lang="pug">
-    .table-details-container
+    .table-details-container(v-loading="isLoadingTable")
         // 编辑字段弹出框
         el-dialog.dialog-edit-field(title='字段详情', :visible.sync='dialog_edit_field_visible', width='50%', top='50px', append-to-body='', modal-append-to-body='', lock-scroll='', :show-close='true', :close-on-click-modal='false', :close-on-press-escape='false', close='handleCloseEditField')
             el-form(:model='form_edit_field', :disabled='isSubmittingFieldForm', label-width="100px", size='small', class="form-edit-field")
@@ -23,9 +23,6 @@
                         el-input(v-model='form_edit_field.descr', type='textarea', :style='{"width": "200px"}')
 
                     el-form-item(label='统计口径: ', prop='statisticsCalibre')
-                        el-input(v-model='form_edit_field.statisticsCalibre', :style='{"width": "200px"}')
-
-                    el-form-item(label='字段码值: ', prop='statisticsCalibre')
                         el-input(v-model='form_edit_field.statisticsCalibre', :style='{"width": "200px"}')
 
                     el-form-item(label='允许空值:', prop='isAllowNull')
@@ -70,7 +67,7 @@
                         el-table-column(prop="fieldCreateTime", label="创建时间", width="200")
                         el-table-column(prop="fieldUpdateTime", label="更新时间", width="200")
                         el-table-column(prop="descr", label="字段描述", width="100")
-                        el-table-column(prop="statisticsCalibre", label="统计口径", width="100", :sortable="true")
+                        el-table-column(prop="statisticsCaliber", label="统计口径", width="100", :sortable="true")
                         el-table-column(prop="isSensitiveInfo", label="敏感信息", :sortable="true", align="center", width='100')
                             template(slot-scope="scope")
                                 span.check(v-if="checkOrX(scope.row.isSensitiveInfo) === '✓'")
@@ -83,7 +80,7 @@
                                     | ✓
                                 span.x(v-if="checkOrX(scope.row.isAllowNull) === '✕'")
                                     | ✕
-                        el-table-column(prop="statisticsCalibre", label="字段码值", :sortable="true", width='100')
+
 
                 el-tab-pane(label='人员权限查询' name='authed_people')
                     .authed-people
@@ -129,9 +126,10 @@
         mapping: {
           dbName: "所属库名",
           tableName: "表名",
+          descr: "描述",
           amount: "数据量",
           tableCreateTime: "创建时间",
-          tableEffectTime: "生效时间",
+          effectiveTime: "生效时间",
           tableUpdateTime: "更新时间",
           dataOwner: "数据归属",
           devOwner: "开发归属",
@@ -149,8 +147,7 @@
         tmpl_form_edit_field: {
           statisticsCalibre: null,
           isSensitiveInfo: 1,
-          isAllowNull: 1,
-          codeValueType: null
+          isAllowNull: 1
         },
         table_basic_info: [],
         table_metas: {},
@@ -206,15 +203,23 @@
           pick(this.table_metas, [
             "tableName",
             "dbName",
+            "descr",
             "amount",
             "tableCreateTime",
-            "tableEffectTime",
+            "effectiveTime",
             "tableUpdateTime",
             "dataOwner",
             "devOwner",
             "businessOwner"
           ]),
           (v, k) => {
+            if (k === "tableCreateTime" || k === "effectiveTime" || k === "tableUpdateTime") {
+              v = v ? format(
+                new Date(v),
+                "YYYY[/]MM[/]D[/]hh[:]mm[:]ss",
+                { locale: zh_cn }
+              ) : "无";
+            }
             return {
               display_name: this.mapping[k],
               value: v
@@ -286,7 +291,7 @@
             this.authed_people = res.peopleList;
           },
           err => {
-            console.error(`err: `, err);
+            console.error(`err: `, err.errmsg);
             this.$notify({
               message: `${err.errmsg}`,
               type: "error",
@@ -401,8 +406,7 @@
             .display-name
                 color #1d1d1b
                 font-size 14px
-                width 100px
-                min-width 85px
+                width 90px
                 padding-left .5em
                 font-weight bold
 

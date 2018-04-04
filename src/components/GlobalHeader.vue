@@ -12,8 +12,8 @@
         |
         transition(name="fade")
             .search-input(v-show='flag_show_search_input')
-                el-input(placeholder='请输入内容', v-model.trim='input_of_search', @keyup.enter.native="search", size='medium', :clearable='true')
-                    el-button(slot='append' type='primary' icon='el-icon-search' size='medium', @click='search')
+                el-input(placeholder='请输入内容', v-model.trim='input_of_search', @keyup.enter.native="search", :disabled='isSearching', size='medium', :clearable='true')
+                    el-button(slot='append' type='primary', :loading='isSearching', icon='el-icon-search' size='medium', @click='search')
                         | 搜索
         |
         el-menu.menu(mode='horizontal', background-color='#333644', text-color='#fff', active-text-color='#FF6600', :default-active='defaultActive', :router='true')
@@ -58,7 +58,8 @@
         icon_event,
         icon_privilege,
         input_of_search: "",
-        flag_show_search_input: false
+        flag_show_search_input: false,
+        isSearching: false
       };
     },
     computed: {
@@ -95,18 +96,7 @@
       },
       userName() {
         return this.$store.getters.user_name;
-      },
-      inputSearch() {
-        return this.$store.getters.seach_word;
       }
-      // inputSearch {
-      //   get: function() {
-      //     return this.$store.getters.seach_word;
-      //   },
-      //   set: function(word) {
-      //
-      //   }
-      // }
     },
     watch: {
       "$route"(to, from) {
@@ -128,10 +118,11 @@
     },
     methods: {
       search() {
-        console.log(`this.input_of_search: ${this.input_of_search}`);
+        this.isSearching = true;
         this.$store.commit("SAVE_USER_INPUT_SEARCH", {
           seach_word: this.input_of_search.trim()
         });
+        this.isSearching = false;
         return this.$router.push({
           name: "searchresult",
           query: {

@@ -98,7 +98,7 @@
           this.db_info = res.dbInfo;
           this.table_list = res.tableList.list;
         }, err => {
-          console.error(`err: `, err);
+          console.error(`err: `, err.errmsg);
           this.$notify({
             message: `${err}`,
             type: "error",

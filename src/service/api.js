@@ -2,9 +2,9 @@ import network from "@/service/network";
 
 export default {
   // 获取 首页数据
-  getIndexData(req) {
+  getIndexData(params) {
     // return network.get("/index.json");
-    return network.get("/index");
+    return network.get("/index", { params });
   },
   // 获取Hive DB列表
   getHiveList() {

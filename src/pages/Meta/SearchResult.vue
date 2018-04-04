@@ -54,12 +54,9 @@
         return this.$route.query.keyword;
       },
       type() {
+        console.log(`computed.type: `, this.$route.query.type);
         return this.$route.query.type;
       }
-    },
-    beforeRouteUpdate(to, from, next) {
-      console.log(`beforeRouteUpdate: to: `, to.query.keyword, `, from: `, from.query.keyword);
-      return next();
     },
     methods: {
       handleTabClick(tab, event) {
@@ -98,7 +95,6 @@
 
 <style lang="stylus" scoped>
     .tabs-container
-        /*flex-grow 1*/
         height 100%
         /deep/ .el-tabs__item
             user-select none

@@ -24,7 +24,14 @@
                     el-tab-pane(label='TimeLine(暂无)' name='timeline', :disabled="true") TimeLine
 
             .pagination
-                el-pagination(@size-change="handlePageSizeChange", @current-change="handleCurrentPageChange", :current-page="pageNum", :total="total", :page-size="10", :page-sizes="[10, 20, 50, 100]", layout="total, sizes, prev, pager, next, jumper", :background="true", :small="true")
+                .text-total
+                    span 共
+                    span.num {{hive_db.DBTOTAL}}
+                    span 个库，共
+                    span.num {{hive_db.TABLETOTAL}}
+                    span 张表
+                |
+                el-pagination(@size-change="handlePageSizeChange", @current-change="handleCurrentPageChange", :current-page.sync="pageNum", :total="total", :page-size="pageSize", :page-sizes="[10, 20, 50, 100]", layout="jumper, prev, pager, next, sizes", :background="true", :small="true")
 
 </template>
 
@@ -49,13 +56,14 @@
     },
     data() {
       return {
-        input_search: "",
-        isSearching: false,
-        activeTabName: "hive",
-        pageNum: 1,
-        total: 10, // 表格总条目数
-        table_data: [],
-        hive_db: {}
+        input_search: "",// 用户输入搜索词
+        isSearching: false, // Flag位： 正在搜索
+        activeTabName: "hive",// 当前选中tab页，<el-tabs/>需要
+        pageNum: 1,// 当前页
+        pageSize: 10,// 请求分页数
+        total: 0,// Hive库总数
+        table_data: [],// Hive库列表
+        hive_db: {} // 接口返回的Hive库信息
       };
     },
     computed: {
@@ -85,10 +93,9 @@
       this.fetchIndexData();
       // 后台获取Hive DB列表，当空白搜索时直接跳去首条DB
       this.fetchHiveDBList().then(res => {
-        // console.log(`getHiveList res: `, res);
         this.hive_db = res;
       }, err => {
-        console.error(`err: `, err);
+        console.error(`后台获取Hive DB列表失败: `, err.errmsg);
       });
     },
     methods: {
@@ -97,15 +104,18 @@
           seach_word: this.input_search.trim()
         });
         if (this.input_search === "") {
+          this.isSearching = true;
           if (isEmpty(this.hive_db)) {
             return this.fetchHiveDBList().then(res => {
               console.log(`getHiveList res: `, res);
+              this.isSearching = false;
               this.hive_db = res;
               return this.$router.push({ name: "blanksearchresult", params: { db: this.hive_db.dbList[0].id } });
             }, err => {
-              console.error(`err: `, err);
+              console.error(`err: `, err.errmsg);
             });
           } else {
+            this.isSearching = false;
             return this.$router.push({ name: "blanksearchresult", params: { db: this.hive_db.dbList[0].id } });
           }
         } else {
@@ -126,14 +136,14 @@
         });
         return API.getIndexData({
           pageNum: Number(this.pageNum),
-          total: Number(this.page_size)
+          pageSize: Number(this.pageSize)
         }).then(res => {
           // console.log(`res: `, res);
           this.table_data = res.dbList.list;
-          // this.total = Number(res.total);
+          this.total = Number(res.dbList.total);
           loading.close();
         }, err => {
-          console.error(`err: `, err);
+          console.error(`err: `, err.errmsg);
           loading.close();
           this.$notify({
             message: `${err.errmsg}`,
@@ -147,31 +157,30 @@
         return API.getHiveList({});
       },
       handleTabClick(tab, event) {
-        console.log(tab, event);
+        // console.log(tab, event);
       },
       // 表格行点击
       handleRowClick(row) {
-        console.log(`handleRowClick() row: `, row);
         return this.$router.push({
           name: "blanksearchresult",
           params: { db: row.id }
         });
       },
       handleCurrentPageChange(val) {
-        console.log(`当前页: ${val}`);
-        // this.pageNum = Number(val);
-        // return this.fetchData();
+        this.pageNum = Number(val);
+        return this.fetchIndexData();
       },
       handlePageSizeChange(val) {
-        console.log(`每页 ${val} 条`);
-        // this.page_size = Number(val);
-        // return this.fetchData();
+        this.pageSize = Number(val);
+        return this.fetchIndexData();
       }
     }
   };
 </script>
 
 <style lang="stylus" scoped>
+    ping_an-orange = #FF6600
+
     .search-input
         display flex
         flex-direction column
@@ -227,9 +236,22 @@
 
     .pagination
         display flex
+        position relative
         justify-content center
-        flex none
         height 50px
+
+        .text-total
+            position absolute
+            left 10px
+            align-self center
+            padding-top 5px
+            line-height 28px
+            height 28px
+            font-size 13px
+            color #909399
+
+            span.num
+                color ping_an-orange
 
     .pagination /deep/ .el-pagination
         display flex
