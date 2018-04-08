@@ -32,5 +32,9 @@ export default {
     return network.get("/search/keyword", {
       params: req
     });
+  },
+  // 更新 表格的标签
+  updateTableTags(obj) {
+    return network.post("/search/updateTableTags", undefined, { params: obj });
   }
 };

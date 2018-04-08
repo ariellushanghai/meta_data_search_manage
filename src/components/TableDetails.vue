@@ -52,7 +52,7 @@
                 .tags-title
                     | 标签 :
                 el-button.btn-add-tags(@click="openFormAddTags", type="primary" icon="el-icon-plus", size="mini", round='', plain='')
-                el-tag(v-for='(tag, idx) in tableMetaTags', @close="handleDelTag(tag)", :key='tag', closable='', size='medium') {{tag}}
+                el-tag(v-for='(tag, idx) in list_of_table_tags', @close="handleDelTag(tag)", :key='tag', closable='', size='medium') {{tag}}
 
         .table
             el-tabs(v-model='activeTabName', @tab-click='handleTabClick' type='border-card')
@@ -154,6 +154,7 @@
         },
         table_basic_info: [],
         table_metas: {},
+        list_of_table_tags: [],
         authed_people: [],
         timeline_data: [
           {
@@ -224,12 +225,6 @@
             };
           }
         );
-      },
-      tableMetaTags() {
-        if (this.table_metas.tags && this.table_metas.tags !== "") {
-          return filter(this.table_metas.tags.split(","), length);
-        }
-        return [];
       }
     },
     mounted() {
@@ -238,8 +233,8 @@
     },
     activated() {
       console.log(`<TableDetails/> activated(): this.table_id: ${this.table_id}, this.high_light_field_id: ${this.high_light_field_id}`);
-      if(this.isLoadingTable) {
-        return false
+      if (this.isLoadingTable) {
+        return false;
       } else {
         this.setUpUI();
       }
@@ -290,6 +285,7 @@
           res => {
             this.isLoadingTable = false;
             this.table_metas = extend({}, res.tableInfo);
+            this.list_of_table_tags = this.table_metas.tags ? filter(this.table_metas.tags.split(","), length) : [];
             this.table_basic_info = res.fieldList.list;
             this.authed_people = res.peopleList;
           },
@@ -316,20 +312,30 @@
         return (this.dialog_edit_field_visible = true);
       },
       handleCloseEditField() {
+        
       },
       handleDelTag(tag) {
-        this.dynamicTags.splice(this.dynamicTags.indexOf(tag), 1);
-        // this.table_metas.tags
+        this.list_of_table_tags.splice(this.list_of_table_tags.indexOf(tag), 1);
+        console.log(`handleDelTag(${tag}) => `, this.list_of_table_tags);
+        return API.updateTableTags({
+          id: this.table_id,
+          tags: this.list_of_table_tags.join(",")
+        });
       },
       handleNewTagInput() {
-        // this.table_metas.tags
-        if (this.form_edit_tags.new_tag !== "") {
-          let arr = this.table_metas.tags.split(",");
-          arr.push(this.form_edit_tags.new_tag);
-          this.table_metas.tags = arr.join(",");
+        if (this.form_edit_tags.new_tag.trim() === "") {
+          this.form_edit_tags.new_tag = "";
+          return (this.dialog_edit_tags_visible = false);
         }
-        this.form_edit_tags.new_tag = "";
-        return (this.dialog_edit_tags_visible = false);
+        this.list_of_table_tags.push(this.form_edit_tags.new_tag);
+        return API.updateTableTags({
+          id: this.table_id,
+          tags: this.list_of_table_tags.join(",")
+        }).then(res => {
+          this.isSubmittingTagsForm = true;
+          this.form_edit_tags.new_tag = "";
+          return (this.dialog_edit_tags_visible = false);
+        });
       },
       openFormAddTags() {
         if (this.dialog_edit_tags_visible) {
