@@ -93,6 +93,7 @@
     mounted() {
       console.log(`ResultItemTable: keyword: ${this.keyword}, type: ${this.type}`);
       this.getResultItem();
+      this.active_filter = this.convertTypeToZh(this.type);
     },
     watch: {
       keyword: function(new_word) {
@@ -101,7 +102,16 @@
       },
       type: function(new_type) {
         console.log(`type changed: `, new_type);
+        this.active_filter = this.convertTypeToZh(new_type);
         return this.getResultItem();
+      },
+      active_filter: function(new_type) {
+        console.log(`active_filter changed: `, new_type);
+        console.log(`queryType: ${this.queryType}`);
+        return this.$emit("changeSearch", {
+          "keyword": this.keyword,
+          "type": this.queryType
+        });
       }
     },
     methods: {
@@ -115,12 +125,12 @@
         this.text_place_holder = "正在搜索。。。";
         return API.getSearchResult({
           keyword: this.keyword,
-          type: this.queryType
+          type: this.type
         }).then(res => {
           this.text_place_holder = "无结果";
           console.log(`getSearchResult(${JSON.stringify({
             keyword: this.keyword,
-            type: this.queryType
+            type: this.type
           })}) => `, res);
           this.search_result_list = map(res.pageInfo.list, (item) => {
             return extend(item, {
@@ -152,17 +162,17 @@
           elem.highlight = (index === idx);
           return elem;
         });
-        console.log(`<SearchResultTable/>: clickOnSearchResult: `, item, index);
+        console.log(`<SearchResultTable/>: clickOnSearchResult: `, item);
         return this.$emit("clickOnSearchResult", item);
       },
       // 中文转换搜索结果的type
-      convertTypeToZh(zh) {
+      convertTypeToZh(type = "all") {
         return {
           "all": "全部",
           "db": "库",
           "table": "表",
           "field": "字段"
-        }[zh];
+        }[type];
       }
     }
   };
@@ -379,6 +389,7 @@
             left 0
             display flex
             justify-content center
+            background-color #f5f7fa
 
             /deep/ .el-pagination
                 display flex

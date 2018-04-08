@@ -24,7 +24,7 @@
                     el-tab-pane(label='TimeLine(暂无)' name='timeline', :disabled="true") TimeLine
 
             .pagination
-                .text-total
+                .text-total(v-if='hive_db.DBTOTAL || hive_db.TABLETOTAL')
                     span 共
                     span.num {{hive_db.DBTOTAL}}
                     span 个库，共
