@@ -33,8 +33,18 @@ export default {
       params: req
     });
   },
+  // 获取 表变更历史
+  getTableHistory(req) {
+    return network.get("/search/tableHistory", {
+      params: req
+    });
+  },
   // 更新 表格的标签
   updateTableTags(obj) {
     return network.post("/search/updateTableTags", undefined, { params: obj });
+  },
+  // 更新 表格的字段
+  updateField(obj) {
+    return network.post("/search/updateField", undefined, { params: obj });
   }
 };

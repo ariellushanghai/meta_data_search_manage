@@ -20,13 +20,14 @@
     "lodash": "^4.17.5",
     "normalize.css": "^8.0.0",
     "qs": "^6.5.1",
+    "query-string": "^6.0.0",
     "vue": "^2.5.16",
     "vue-light-timeline": "^0.12.8",
     "vue-meta": "^1.5.0",
     "vue-router": "^3.0.1",
     "vuex": "^3.0.1",
     "vuex-loading": "^0.2.6",
-    "vuex-persistedstate": "^2.5.1"
+    "vuex-persistedstate": "^2.5.2"
   },
   "devDependencies": {
     "ajv": "^6.4.0",
@@ -83,7 +84,7 @@
     "stylus-loader": "^3.0.2",
     "uglifyjs-webpack-plugin": "^1.2.4",
     "url-loader": "^1.0.1",
-    "vue-jest": "^2.4.0",
+    "vue-jest": "^2.4.1",
     "vue-loader": "^14.2.2",
     "vue-style-loader": "^4.1.0",
     "vue-template-compiler": "^2.5.16",

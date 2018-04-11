@@ -1,7 +1,7 @@
 <template lang="pug">
     .table-details-container(v-loading="isLoadingTable")
         // 编辑字段弹出框
-        el-dialog.dialog-edit-field(title='字段详情', :visible.sync='dialog_edit_field_visible', width='50%', top='50px', append-to-body='', modal-append-to-body='', lock-scroll='', :show-close='true', :close-on-click-modal='false', :close-on-press-escape='false', close='handleCloseEditField')
+        el-dialog.dialog-edit-field(title='字段详情', :visible.sync='dialog_edit_field_visible', width='50%', top='50px', append-to-body='', modal-append-to-body='', lock-scroll='', :show-close='true', :close-on-click-modal='false', :close-on-press-escape='false', close='handleCancelUpdateField')
             el-form(:model='form_edit_field', :disabled='isSubmittingFieldForm', label-width="100px", size='small', class="form-edit-field")
                 .non-editable-area
                     el-form-item(label='字段名称: ', prop='fieldName')
@@ -22,8 +22,8 @@
                     el-form-item(label='字段描述: ', prop='descr')
                         el-input(v-model='form_edit_field.descr', type='textarea', :style='{"width": "200px"}')
 
-                    el-form-item(label='统计口径: ', prop='statisticsCalibre')
-                        el-input(v-model='form_edit_field.statisticsCalibre', :style='{"width": "200px"}')
+                    el-form-item(label='统计口径: ', prop='statisticsCaliber')
+                        el-input(v-model='form_edit_field.statisticsCaliber', :style='{"width": "200px"}')
 
                     el-form-item(label='允许空值:', prop='isAllowNull')
                         el-switch(v-model='form_edit_field.isAllowNull', active-text='是', :active-value='Number(1)', inactive-text='否', :inactive-value='Number(0)')
@@ -32,13 +32,13 @@
                         el-switch(v-model='form_edit_field.isSensitiveInfo', active-text='是', :active-value='Number(1)', inactive-text='否', :inactive-value='Number(0)')
 
             div(slot="footer")
-                el-button(size="mini") 保存
-                el-button(size="mini") 取消
+                el-button(@click="handleUpdateField", size="mini") 保存
+                el-button(@click="handleCancelUpdateField", size="mini") 取消
         // 编辑标签弹出框
         el-dialog.dialog-edit-tags(title='编辑标签', :visible.sync='dialog_edit_tags_visible', width='33%', top='50px', append-to-body='', modal-append-to-body='', lock-scroll='', :show-close='true', :close-on-click-modal='false', :close-on-press-escape='false', close='handleCloseEditTags')
             el-form(:model='form_edit_tags', @submit.native.prevent="", :disabled='isSubmittingTagsForm', label-width="100px", size='small', class="form-edit-tags")
                 el-form-item(label='请输入: ', prop='new_tag')
-                    el-input(v-model.trim='form_edit_tags.new_tag', placeholder='标签名', @keyup.enter.native="handleNewTagInput", @blur="handleNewTagInput", :style='{"width": "200px"}')
+                    el-input(v-model.trim='form_edit_tags.new_tag', placeholder='标签名', @keyup.enter.native="handleNewTagInput", :style='{"width": "200px"}')
 
 
         .table-metas
@@ -57,7 +57,7 @@
         .table
             el-tabs(v-model='activeTabName', @tab-click='handleTabClick' type='border-card')
                 el-tab-pane(label='基本信息查询' name='basic_info')
-                    el-table.table-basic-info(:data="tableBasicInfo", ref="table", @current-change="handleCurrentRowChangeBasicInfo", height="100%", :highlight-current-row='true', :border='true', :stripe='true', size='mini')
+                    el-table.table-basic-info(:data="tableBasicInfo", ref="table", @current-change="handleCurrentRowChangeBasicInfo", height="100%", :border='true', :stripe='true', size='mini')
                         el-table-column(prop="fieldName", label="字段名称", :sort-method='sortFieldName', :sortable='true', :show-overflow-tooltip='true', min-width='150')
                         el-table-column(prop="isPrimarykey", label="是否主键", :sortable="true", align="center", width='100')
                             template(slot-scope="scope")
@@ -93,7 +93,8 @@
                                 div {{person.userName}}
 
                 el-tab-pane(label='变更历史查询' name='modified_log')
-                    light-timeline(:items="timeline_data")
+                    .modified-log
+                        light-timeline(:items="timeline_data")
                 el-tab-pane(label='血缘关系查询(暂无)' name='relations', :disabled="true") 血缘关系查询
 
 
@@ -146,11 +147,6 @@
         form_edit_field: {}, // 选中编辑的字段副本
         form_edit_tags: {
           new_tag: ""
-        }, // 选中编辑的字段副本
-        tmpl_form_edit_field: {
-          statisticsCalibre: null,
-          isSensitiveInfo: 1,
-          isAllowNull: 1
         },
         table_basic_info: [],
         table_metas: {},
@@ -259,12 +255,21 @@
         if (isNumber(Number(this.high_light_field_id))) {
           return this.setUpUI();
         }
+      },
+      activeTabName(tab_name) {
+        console.log(`activeTabName changed: tab_name : `, tab_name);
+        if (tab_name === "modified_log") {
+          return API.getTableHistory({
+            tableId: this.table_id
+          });
+        }
       }
     },
     methods: {
       setUpUI() {
         this.fetchTable(this.table_id);
         if (this.high_light_field_id) {
+          console.log(`if`);
           let field = this.tableBasicInfo[0];
           this.$refs.table.setCurrentRow();
           this.$refs.table.setCurrentRow(field);
@@ -305,14 +310,38 @@
       },
       handleCurrentRowChangeBasicInfo(row) {
         console.log("点击单行() : ", JSON.stringify(row));
+        // this.$refs.table.setCurrentRow();
         if (this.dialog_edit_field_visible) {
           return false;
         }
         this.form_edit_field = extend({}, row);
         return (this.dialog_edit_field_visible = true);
       },
-      handleCloseEditField() {
-        
+      handleCancelUpdateField() {
+        this.dialog_edit_field_visible = false;
+        this.form_edit_field = {};
+      },
+      handleUpdateField() {
+        console.log(this.form_edit_field);
+        this.isSubmittingFieldForm = true;
+        return API.updateField(pick(this.form_edit_field, [
+          "id",
+          "descr",
+          "statisticsCaliber",
+          "isAllowNull",
+          "isSensitiveInfo"
+        ])).then(_ => {
+          this.isSubmittingFieldForm = false;
+          return this.handleCancelUpdateField();
+        }, err => {
+          this.isSubmittingFieldForm = false;
+          console.error(`err: `, err.errmsg);
+          this.$notify({
+            message: `${err.errmsg}`,
+            type: "error",
+            duration: 0
+          });
+        });
       },
       handleDelTag(tag) {
         this.list_of_table_tags.splice(this.list_of_table_tags.indexOf(tag), 1);
@@ -331,7 +360,7 @@
         return API.updateTableTags({
           id: this.table_id,
           tags: this.list_of_table_tags.join(",")
-        }).then(res => {
+        }).then(_ => {
           this.isSubmittingTagsForm = true;
           this.form_edit_tags.new_tag = "";
           return (this.dialog_edit_tags_visible = false);
@@ -526,7 +555,7 @@
     .table-basic-info::before
         height 0
 
-    .authed-people
+    .authed-people, .modified-log
         display flex
         flex-wrap wrap
         align-content flex-start
@@ -536,37 +565,37 @@
         overflow-x hidden
         overflow-y auto
 
-        .authed-person
+    .authed-person
+        display flex
+        justify-content space-between
+        width 15%
+        height 100px
+        padding .5em
+        max-width 200px
+        min-width 180px
+        margin .5em
+        border-radius 4px
+        border 1px solid #ebeef5
+        overflow hidden
+        box-shadow 0 1px 6px 0 rgba(0, 0, 0, .1)
+
+        img
+            align-self center
+            width 50px
+            height 50px
+
+        .names
             display flex
-            justify-content space-between
-            width 15%
-            height 100px
-            padding .5em
-            max-width 200px
-            min-width 180px
-            margin .5em
-            border-radius 4px
-            border 1px solid #ebeef5
-            overflow hidden
-            box-shadow 0 1px 6px 0 rgba(0, 0, 0, .1)
-
-            img
-                align-self center
-                width 50px
-                height 50px
-
-            .names
-                display flex
-                flex-direction column
-                justify-content space-around
-                width calc(95% - 50px)
-                > div {
-                    overflow hidden
-                    text-overflow ellipsis
-                    white-space nowrap
-                    word-break break-all
-                    vertical-align middle
-                }
+            flex-direction column
+            justify-content space-around
+            width calc(95% - 50px)
+            > div {
+                overflow hidden
+                text-overflow ellipsis
+                white-space nowrap
+                word-break break-all
+                vertical-align middle
+            }
 
 
 </style>
