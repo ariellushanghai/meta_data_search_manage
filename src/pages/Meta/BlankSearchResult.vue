@@ -62,7 +62,7 @@
     methods: {
       handleSelectTable(table_id) {
         console.log(`handleSelectTable(${table_id})`);
-        return this.selected_table_id = Number(table_id);
+        return this.selected_table_id = table_id;
       },
       handleTabClick(tab, event) {
         console.log(tab, event);

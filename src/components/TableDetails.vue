@@ -26,10 +26,10 @@
                         el-input(v-model='form_edit_field.statisticsCaliber', :style='{"width": "200px"}')
 
                     el-form-item(label='允许空值:', prop='isAllowNull')
-                        el-switch(v-model='form_edit_field.isAllowNull', active-text='是', :active-value='Number(1)', inactive-text='否', :inactive-value='Number(0)')
+                        el-switch(v-model='form_edit_field.isAllowNull', active-text='是', :active-value='"Y"', inactive-text='否', :inactive-value='"N"')
 
                     el-form-item(label='是否敏感信息:', prop='isSensitiveInfo')
-                        el-switch(v-model='form_edit_field.isSensitiveInfo', active-text='是', :active-value='Number(1)', inactive-text='否', :inactive-value='Number(0)')
+                        el-switch(v-model='form_edit_field.isSensitiveInfo', active-text='是', :active-value='"Y"', inactive-text='否', :inactive-value='"N"')
 
             div(slot="footer")
                 el-button(@click="handleUpdateField", size="mini") 保存
@@ -182,11 +182,11 @@
               "YYYY[年]MMMD[日]Ah[点]mm[分]ss[秒]",
               { locale: zh_cn }
             ),
-            displayedFieldUpdateTime: format(
+            displayedFieldUpdateTime: row.fieldUpdateTime ? format(
               new Date(row.fieldUpdateTime),
               "YYYY[年]MMMD[日]Ah[点]mm[分]ss[秒]",
               { locale: zh_cn }
-            )
+            ) : "无"
           });
         }), ["fieldName", "isPrimarykey"]);
       },
@@ -246,15 +246,13 @@
         if (!new_id) {
           return this.clearUI();
         }
-        if (isNumber(Number(this.table_id)) && Number(this.table_id) !== 0) {
+        if (Number(this.table_id) !== 0) {
           return this.setUpUI();
         }
       },
       high_light_field_id(new_id, old_id) {
         console.log(`high_light_field_id changed: new_id : `, new_id, `old_id:`, old_id);
-        if (isNumber(Number(this.high_light_field_id))) {
-          return this.setUpUI();
-        }
+        return this.setUpUI();
       },
       activeTabName(tab_name) {
         console.log(`activeTabName changed: tab_name : `, tab_name);
@@ -374,7 +372,7 @@
         return (this.dialog_edit_tags_visible = true);
       },
       checkOrX(v) {
-        return Number(v) === 0 ? "✕" : "✓";
+        return v === "N" ? "✕" : "✓";
       },
       sortFieldName(a, b) {
         // console.log(`sortFieldName( ${a.fieldName}, ${b.fieldName} => ${a.fieldName.trim().localeCompare(b.fieldName.trim())}`);

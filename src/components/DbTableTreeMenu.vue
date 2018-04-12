@@ -68,10 +68,10 @@
     methods: {
       setUpUI() {
         this.hives.selected = find(this.hives.list, (hive) => {
-          return Number(hive.id) === Number(this.db_id);
+          return hive.id === this.db_id
         });
         console.log(`setUpUI() : `, this.hives.selected);
-        if (this.db_id && Number(this.db_id) !== 0) {
+        if (this.db_id && this.db_id !== 0) {
           this.$refs.hiveList.setCurrentRow(this.hives.selected);
         }
       },
