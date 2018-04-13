@@ -132,9 +132,9 @@
       },
       logOut() {
         return API.logOut().then(res => {
-          console.log(`logout success!!`);
+          console.log(`logout success!!`, res);
           this.$store.commit("LOGOUT");
-          return this.$router.replace({ name: "login" });
+          return location.replace(`${res.url}?url=${encodeURIComponent(location.href)}`);
         });
       },
       handleCommand(command) {

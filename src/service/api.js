@@ -1,6 +1,9 @@
 import network from "@/service/network";
 
 export default {
+  logOut(params) {
+    return network.get("/logout", { params });
+  },
   // 获取 首页数据
   getIndexData(params) {
     // return network.get("/index.json");
