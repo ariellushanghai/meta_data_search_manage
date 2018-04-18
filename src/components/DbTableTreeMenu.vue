@@ -97,10 +97,11 @@
       },
       handleSelectHive(val, oldVal) {
         console.log(`handleSelectHive() val: => `, val, `, oldVal: => `, oldVal);
-        if (this.tables.is_loading || isEmpty(val) || Number(val.id) === 0) {
+        if (this.tables.is_loading || isEmpty(val) || `${val.id}`.length === 0) {
           return false;
         }
         this.hives.selected = val;
+        this.tables.name_filter = "";
         return this.getHiveById(val.id);
       },
       handleSelectTable(val) {

@@ -73,7 +73,7 @@
         icon_table,
         icon_field,
         active_filter: "全部",
-        pageNum: 2,// 当前页
+        pageNum: 1,// 当前页
         pageSize: 10,// 请求分页数
         total: 0,// 搜索结果总数
         search_result_list: [],
@@ -103,6 +103,7 @@
       type: function(new_type) {
         console.log(`type changed: `, new_type);
         this.active_filter = this.convertTypeToZh(new_type);
+        this.pageNum = 1;
         return this.getResultItem();
       },
       active_filter: function(new_type) {

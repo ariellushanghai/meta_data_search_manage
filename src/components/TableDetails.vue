@@ -44,10 +44,10 @@
         .table-metas
             .entries
                 .entry(v-for='entry in tableMetas', :key='entry.name')
-                    span.display-name {{entry.display_name + " : "}}
+                    .display-name {{entry.display_name + " : "}}
                     el-tooltip(v-if='entry.display_name === "表名" || entry.display_name === "描述"', effect="light", :content="entry.value", placement="bottom")
-                        span.value {{entry.value}}
-                    span.value(v-else) {{entry.value}}
+                        .value {{entry.value}}
+                    .value(v-else) {{entry.value}}
             .tags
                 .tags-title
                     | 标签 :
@@ -277,6 +277,7 @@
       console.log(`<TableDetails/> deactivated`);
       // this.setUpUI();
       console.log(`<TableDetails/> deactivated(): this.table_id: ${this.table_id}, this.high_light_field_id: ${this.high_light_field_id}`);
+      this.clearUI();
     },
     watch: {
       table_id(new_id, old_id) {
@@ -481,19 +482,20 @@
             border-bottom 1px solid #dcdfe6
 
             .value
-                width auto
+                width calc(100% - 75px)
                 overflow hidden
                 text-overflow ellipsis
                 white-space nowrap
                 word-break break-all
                 vertical-align middle
-                font-size 13px
+                font-size 12.5px
                 color #606266
 
             .display-name
                 color #1d1d1b
-                font-size 14px
-                width 90px
+                font-size 13px
+                width 75px
+                overflow hidden
                 padding-left .5em
                 font-weight bold
 

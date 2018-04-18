@@ -66,10 +66,25 @@
         return this.$route.query.type;
       }
     },
+    beforeRouteUpdate(to, from, next) {
+      if (to.fullPath === from.fullPath) {
+        return next();
+      }
+      this.resetUI();
+      return next();
+    },
     mounted() {
       console.log(`<SearchResult/> mounted: keyword: ${this.keyword}, type: ${this.type}`);
     },
     methods: {
+      resetUI() {
+        this.result_details_view = "";
+        this.selected_db_id = null;
+        this.selected_table_id = null;
+        this.selected_field_id = null;
+        this.isInChildrenTable = false;
+        this.cached_selected_db_id = null;
+      },
       handleTabClick(tab, event) {
         console.log(tab, event);
       },
@@ -160,15 +175,13 @@
         display flex
         flex-shrink 0
         flex-grow 0
-        width 33%
-        min-width 500px
-        max-width 600px
+        width 550px
         height 100%
         padding 0
 
     .result-details
         position relative
-        width 66%
+        width calc(100% - 550px)
         flex-grow 1
         padding 0
         background-color #f5f7fa
