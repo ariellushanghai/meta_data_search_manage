@@ -73,7 +73,7 @@
         icon_table,
         icon_field,
         active_filter: "全部",
-        pageNum: 1,// 当前页
+        pageNum: 2,// 当前页
         pageSize: 10,// 请求分页数
         total: 0,// 搜索结果总数
         search_result_list: [],
@@ -117,7 +117,7 @@
     methods: {
       getResultItem() {
         let loading = this.$loading({
-          target: ".search-result-table .el-tabs__content",
+          target: "#router_view",
           lock: true,
           text: "正在搜索。。。",
           background: "rgba(255,255,255,0.3)"
@@ -125,12 +125,16 @@
         this.text_place_holder = "正在搜索。。。";
         return API.getSearchResult({
           keyword: this.keyword,
-          type: this.type
+          type: this.type,
+          pageNum: Number(this.pageNum),
+          pageSize: Number(this.pageSize)
         }).then(res => {
           this.text_place_holder = "无结果";
           console.log(`getSearchResult(${JSON.stringify({
             keyword: this.keyword,
-            type: this.type
+            type: this.type,
+            pageNum: Number(this.pageNum),
+            pageSize: Number(this.pageSize)
           })}) => `, res);
           this.search_result_list = map(res.pageInfo.list, (item) => {
             return extend(item, {
@@ -392,9 +396,16 @@
             background-color #f5f7fa
 
             /deep/ .el-pagination
+                width 100%
                 display flex
                 justify-content center
                 align-items center
+
+                .el-pagination__total
+                    margin-right .5em
+
+                .el-pagination__jump
+                    margin-left .5em
 
         /deep/ .el-tabs__header
             margin-bottom 0

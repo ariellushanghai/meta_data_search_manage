@@ -1,7 +1,7 @@
 <template lang="pug">
     .db-table-tree-menu
         .dbs
-            el-table(ref="hiveList", :data='hives.list', row-key='id', @current-change='handleSelectHive', :empty-text='hives.placeholder_of_empty_list', :highlight-current-row='true', :show-header='false', size='mini')
+            el-table(ref="hiveList", :data='hives.list', row-key='id', @current-change='handleSelectHive', :empty-text='hives.placeholder_of_empty_list', v-loading='hives.is_loading', :fit='true', :highlight-current-row='true', :show-header='false', size='mini')
                 el-table-column(:show-overflow-tooltip='true')
                     template(slot-scope='scope')
                         img(:src='hives.icon')
@@ -13,7 +13,7 @@
                     img(slot='prefix')
             |
             .list
-                el-table(:data='tableList', @current-change='handleSelectTable', :empty-text='tables.placeholder_of_empty_list', :highlight-current-row='true', :show-header='false', size='mini')
+                el-table(:data='tableList', @current-change='handleSelectTable', :empty-text='tables.placeholder_of_empty_list', v-loading='tables.is_loading', :fit='true', :highlight-current-row='true', :show-header='false', size='mini')
                     el-table-column(:show-overflow-tooltip='true')
                         template(slot-scope='scope')
                             img(:src='tables.icon')
@@ -67,8 +67,9 @@
     },
     methods: {
       setUpUI() {
+        console.log(`setUpUI(): `, this.db_id);
         this.hives.selected = find(this.hives.list, (hive) => {
-          return hive.id === this.db_id
+          return hive.id === this.db_id;
         });
         console.log(`setUpUI() : `, this.hives.selected);
         if (this.db_id && this.db_id !== 0) {

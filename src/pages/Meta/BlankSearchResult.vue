@@ -9,10 +9,12 @@
                         |
                         .selected-table
                             |
-                            table-details(:table_id='selected_table_id', v-show='selected_table_id')
+                            transition(v-if='selected_table_id', name="fade")
+                                table-details(:table_id='selected_table_id')
                             |
-                            .empty-place-holder(v-show='!selected_table_id')
-                                span ←请选择表
+                            transition(v-else, name="fade")
+                                .empty-place-holder()
+                                    span ←请选择表
 
                     |
                     el-tab-pane(label='标签系统(暂无)', name='labelsys', :disabled='true') 标签系统系
@@ -45,13 +47,13 @@
     },
     data() {
       return {
-        selected_table_id: 0,
+        selected_table_id: null,
         activeTabName: "hive"
       };
     },
     computed: {
       currentDbId: function() {
-        return Number(this.$route.params.db);
+        return `${this.$route.params.db}`;
       }
     },
     mounted() {

@@ -20,13 +20,13 @@ axios.defaults.headers.get["Content-Type"] = "application/json";
 axios.interceptors.request.use(
   config => {
     let parsedUrl = queryString.parseUrl(location.hash);
-    console.log(`parsedUrl: `, parsedUrl);
-    console.log(`config: `, config);
+    // console.log(`parsedUrl: `, parsedUrl);
+    // console.log(`config: `, config);
     config.validateStatus = function(status) {
       return Number(status) === 200;
     };
     config.params = parsedUrl.query.tk ? extend(config.params, parsedUrl.query) : config.params;
-    console.log(`config(modified): `, config);
+    // console.log(`config(modified): `, config);
     return config;
   },
   err => {

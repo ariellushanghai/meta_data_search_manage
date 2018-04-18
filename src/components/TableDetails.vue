@@ -1,5 +1,5 @@
 <template lang="pug">
-    .table-details-container(v-loading="isLoadingTable")
+    .table-details-container(v-loading="isLoadingTable", element-loading-text="加载表格数据。。。", element-loading-spinner="el-icon-loading", element-loading-background="#fff")
         // 编辑字段弹出框
         el-dialog.dialog-edit-field(title='字段详情', :visible.sync='dialog_edit_field_visible', width='50%', top='50px', append-to-body='', modal-append-to-body='', lock-scroll='', :show-close='true', :close-on-click-modal='false', :close-on-press-escape='false', close='handleCancelUpdateField')
             el-form(:model='form_edit_field', :disabled='isSubmittingFieldForm', label-width="100px", size='small', class="form-edit-field")
@@ -194,6 +194,44 @@
         if (isEmpty(this.table_metas)) {
           return [];
         }
+        return map([
+          "tableName",
+          "dbName",
+          "descr",
+          "amount",
+          "tableCreateTime",
+          "effectiveTime",
+          "tableUpdateTime",
+          "dataOwner",
+          "devOwner"
+          // "businessOwner"
+        ], (v) => {
+          if (v in this.table_metas) {
+            if (v.toUpperCase().includes("TIME")) {
+              return {
+                name: v,
+                display_name: this.mapping[v],
+                value: this.table_metas[v] ? format(
+                  new Date(v),
+                  "YYYY[/]MM[/]D hh[:]mm[:]ss",
+                  { locale: zh_cn }
+                ) : "无"
+              };
+            }
+            return {
+              name: v,
+              display_name: this.mapping[v],
+              value: this.table_metas[v]
+            };
+          } else {
+            return {
+              name: v,
+              display_name: this.mapping[v],
+              value: "暂无"
+            };
+          }
+        });
+
         return map(
           pick(this.table_metas, [
             "tableName",
@@ -208,7 +246,7 @@
             "businessOwner"
           ]),
           (v, k) => {
-            if (k === "tableCreateTime" || k === "effectiveTime" || k === "tableUpdateTime") {
+            if (k.toUpperCase().includes("TIME")) {
               v = v ? format(
                 new Date(v),
                 "YYYY[/]MM[/]D hh[:]mm[:]ss",
@@ -265,6 +303,9 @@
     },
     methods: {
       setUpUI() {
+        if (!this.table_id) {
+          return false;
+        }
         this.fetchTable(this.table_id);
         if (this.high_light_field_id) {
           console.log(`if`);
@@ -280,7 +321,7 @@
       },
       fetchTable(table_id) {
         console.log(`fetchTable(${table_id})`);
-        if (!table_id || Number(table_id) === 0) {
+        if (`${table_id}`.length === 0) {
           return false;
         }
         this.isLoadingTable = true;
@@ -447,7 +488,7 @@
                 word-break break-all
                 vertical-align middle
                 font-size 13px
-                color #29292d
+                color #606266
 
             .display-name
                 color #1d1d1b
