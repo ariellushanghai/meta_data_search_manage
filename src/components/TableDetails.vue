@@ -84,15 +84,16 @@
                                     | ✕
 
 
-                el-tab-pane(label='人员权限查询' name='authed_people')
+                el-tab-pane(label='人员权限查询' name='authed_people', :disabled="isLoadingTable")
                     .authed-people
-                        .authed-person(v-for='person in authed_people', :key='person.name')
+                        .authed-person(v-if="authedPeople.length > 0", v-for='person in authedPeople', :key='person.operatorId')
                             img(:src="icon_person")
                             .names
-                                div {{person.name}}
-                                div {{person.userName}}
+                                div(v-if='person.chinese_name') {{person.um_name}}
+                                div(v-else) {{person.operatorName}}
+                                div(v-if='person.chinese_name') {{person.chinese_name}}
 
-                el-tab-pane(label='变更历史查询' name='modified_log')
+                el-tab-pane(label='变更历史查询' name='modified_log', :disabled="isLoadingTable")
                     .modified-log
                         light-timeline(:items="timeline_data")
                 el-tab-pane(label='血缘关系查询(暂无)' name='relations', :disabled="true") 血缘关系查询
@@ -259,6 +260,22 @@
             };
           }
         );
+      },
+      authedPeople() {
+        let reg = /\((.*?)\)/g; // 匹配圆括号中的人名
+        return map(
+          this.authed_people,
+          p => {
+            if (p.operatorName.match(reg)) {
+              return extend(p, {
+                um_name: p.operatorName.replace(reg, ""),
+                chinese_name: (p.operatorName.match(reg))[0].replace(/^\(/, "").replace(/\)$/, "")
+              });
+            } else {
+              return p;
+            }
+          }
+        );
       }
     },
     mounted() {
@@ -299,6 +316,25 @@
           return API.getTableHistory({
             tableId: this.table_id
           });
+        } else if (tab_name === "authed_people") {
+          const loading = this.$loading({
+            lock: true,
+            target: ".authed-people",
+            text: "加载中，时间较长。。。",
+            spinner: "el-icon-loading",
+            background: "#fff"
+          });
+          return API.getTablePermissionList({
+            tableName: this.table_metas.tableName,
+            dbName: this.table_metas.dbName
+          }).then(
+            res => {
+              loading.close();
+              console.log(res);
+              this.authed_people = res;
+            });
+        } else {
+          return console.error(`tab_name: ${tab_name}`);
         }
       }
     },
@@ -610,9 +646,10 @@
         display flex
         justify-content space-between
         width 15%
-        height 100px
+        height 60px
+        font-size 11px
         padding .5em
-        max-width 200px
+        max-width 250px
         min-width 180px
         margin .5em
         border-radius 4px
@@ -622,14 +659,14 @@
 
         img
             align-self center
-            width 50px
-            height 50px
+            width 25px
+            height 25px
 
         .names
             display flex
             flex-direction column
             justify-content space-around
-            width calc(95% - 50px)
+            width calc(95% - 25px)
             > div {
                 overflow hidden
                 text-overflow ellipsis

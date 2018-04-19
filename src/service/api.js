@@ -36,6 +36,12 @@ export default {
       params: req
     });
   },
+  // 获取 表人员权限
+  getTablePermissionList(req) {
+    return network.get("/search/getHiveTablePermission", {
+      params: req
+    });
+  },
   // 获取 表变更历史
   getTableHistory(req) {
     return network.get("/search/tableHistory", {
