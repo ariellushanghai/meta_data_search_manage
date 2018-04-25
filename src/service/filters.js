@@ -1,23 +1,11 @@
 export default {
   install(Vue) {
-    Vue.filter('transStatusToTag', function (value) {
-      switch (value) {
-        case 'DONE':
-          return 'success';
-          break;
-        case 'RUNNING':
-          return '';
-          break;
-        case 'PENDING':
-          return 'warning';
-          break;
-        case 'ERROR':
-          return 'danger';
-          break;
-        default:
-          return '';
-          break;
+    Vue.filter("sevenCharsMax", function(value) {
+      if (value) {
+        return value.substring(0, 7);
+      } else {
+        return "";
       }
     });
   }
-}
+};

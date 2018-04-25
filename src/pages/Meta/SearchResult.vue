@@ -189,5 +189,4 @@
     .back-to-belong-db
         display flex
         align-self left
-
 </style>

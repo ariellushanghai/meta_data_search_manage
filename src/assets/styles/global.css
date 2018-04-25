@@ -64,3 +64,11 @@ input::selection, .cell *::selection, .cell::selection, div::selection, span::se
 .el-tabs /deep/ .el-tabs__item.is-disabled {
     cursor: not-allowed;
 }
+
+.el-notification.right .el-notification__content {
+    margin: 5px;
+}
+
+.el-notification.right .el-notification__group {
+    margin-left: 10px;
+}

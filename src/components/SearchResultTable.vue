@@ -139,12 +139,14 @@
           })}) => `, res);
           this.search_result_list = map(res.pageInfo.list, (item) => {
             return extend(item, {
-              "highlight": false
+              "highlight": false,
+              "cnt": (String(item.cnt).trim().length === 0) ? "0" : item.cnt
             });
           });
           this.total = Number(res.pageInfo.total);
           loading.close();
         }, err => {
+          this.text_place_holder = "出错了";
           console.error(`err: `, err.errmsg);
           loading.close();
           this.$notify({

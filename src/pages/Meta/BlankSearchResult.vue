@@ -14,7 +14,7 @@
                             |
                             transition(v-else, name="fade")
                                 .empty-place-holder()
-                                    span ←请选择表
+                                    span ←请选择您所需要查看的数据表
 
                     |
                     el-tab-pane(label='标签系统(暂无)', name='labelsys', :disabled='true') 标签系统系

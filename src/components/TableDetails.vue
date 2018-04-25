@@ -52,7 +52,7 @@
                 .tags-title
                     | 标签 :
                 el-button.btn-add-tags(@click="openFormAddTags", type="primary" icon="el-icon-plus", size="mini", round='', plain='')
-                el-tag(v-for='(tag, idx) in list_of_table_tags', @close="handleDelTag(tag)", :key='tag', closable='', size='medium') {{tag}}
+                el-tag(v-for='(tag, idx) in list_of_table_tags', @close="handleDelTag(tag)", :key='tag', :closable='true', size='medium') {{tag | sevenCharsMax}}
 
         .table
             el-tabs(v-model='activeTabName', @tab-click='handleTabClick' type='border-card')
@@ -63,8 +63,10 @@
                             template(slot-scope="scope")
                                 span.check(v-if="checkOrX(scope.row.isPrimarykey) === '✓'")
                                     | ✓
-                                span.x(v-if="checkOrX(scope.row.isPrimarykey) === '✕'")
+                                span.x(v-else-if="checkOrX(scope.row.isPrimarykey) === '✕'")
                                     | ✕
+                                span.x(v-else)
+                                    | 无
                         el-table-column(prop="fieldType", label="字段类型", :sortable="true", align="center", width='100')
                         el-table-column(prop="displayedFieldCreateTime", label="创建时间", width="210", :sort-method='sortCreateTime', :sortable='true')
                         el-table-column(prop="displayedFieldUpdateTime", label="更新时间", width="210", :sort-method='sortUpdateTime', :sortable='true')
@@ -74,14 +76,18 @@
                             template(slot-scope="scope")
                                 span.check(v-if="checkOrX(scope.row.isSensitiveInfo) === '✓'")
                                     | ✓
-                                span.x(v-if="checkOrX(scope.row.isSensitiveInfo) === '✕'")
+                                span.x(v-else-if="checkOrX(scope.row.isSensitiveInfo) === '✕'")
                                     | ✕
+                                span.x(v-else)
+                                    | 无
                         el-table-column(prop="isAllowNull", label="允许空值", :sortable="true", align="center", width='100')
                             template(slot-scope="scope")
                                 span.check(v-if="checkOrX(scope.row.isAllowNull) === '✓'")
                                     | ✓
-                                span.x(v-if="checkOrX(scope.row.isAllowNull) === '✕'")
+                                span.x(v-else-if="checkOrX(scope.row.isAllowNull) === '✕'")
                                     | ✕
+                                span.x(v-else)
+                                    | 无
 
 
                 el-tab-pane(label='人员权限查询' name='authed_people', :disabled="isLoadingTable")
@@ -196,8 +202,8 @@
           return [];
         }
         return map([
-          "tableName",
           "dbName",
+          "tableName",
           "descr",
           "amount",
           "tableCreateTime",
@@ -345,10 +351,10 @@
         }
         this.fetchTable(this.table_id);
         if (this.high_light_field_id) {
-          console.log(`if`);
-          let field = this.tableBasicInfo[0];
-          this.$refs.table.setCurrentRow();
-          this.$refs.table.setCurrentRow(field);
+          console.log(`this.high_light_field_id: ${this.high_light_field_id}`);
+          // let field = this.tableBasicInfo[0];
+          // this.$refs.table.setCurrentRow();
+          // this.$refs.table.setCurrentRow(field);
         }
       },
       clearUI() {
@@ -433,13 +439,22 @@
           return (this.dialog_edit_tags_visible = false);
         }
         this.list_of_table_tags.push(this.form_edit_tags.new_tag);
+        this.isSubmittingTagsForm = true;
         return API.updateTableTags({
           id: this.table_id,
           tags: this.list_of_table_tags.join(",")
         }).then(_ => {
-          this.isSubmittingTagsForm = true;
+          this.isSubmittingTagsForm = false;
           this.form_edit_tags.new_tag = "";
           return (this.dialog_edit_tags_visible = false);
+        }, err => {
+          this.isSubmittingTagsForm = false;
+          console.error(`err: `, err.errmsg);
+          this.$notify({
+            message: `${err.errmsg}`,
+            type: "error",
+            duration: 0
+          });
         });
       },
       openFormAddTags() {
@@ -450,7 +465,19 @@
         return (this.dialog_edit_tags_visible = true);
       },
       checkOrX(v) {
-        return v === "N" ? "✕" : "✓";
+        if (v) {
+          if (v === "N") {
+            return "✕";
+          } else if (v === "Y") {
+            return "✓";
+          } else if (String(v).trim().length === 0) {
+            return "";
+          } else {
+            console.error(`v: ${v}`);
+          }
+        } else {
+          return "";
+        }
       },
       sortFieldName(a, b) {
         // console.log(`sortFieldName( ${a.fieldName}, ${b.fieldName} => ${a.fieldName.trim().localeCompare(b.fieldName.trim())}`);

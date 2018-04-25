@@ -3,14 +3,14 @@
         el-main.main
             .search-input
                 h1 搜索您要找的元数据
-                el-input#input_search(placeholder='请输入内容', v-model.trim='input_search', @keyup.enter.native="search", size='medium', :clearable='true', :disabled='isSearching')
-                    el-button(slot='append' type='primary' icon='el-icon-search' size='medium', :loading='isSearching', @click='search')
+                el-input#input_search(placeholder='请输入内容', v-model.trim='input_search', @keyup.enter.native="search", size='large', :clearable='true', :disabled='isSearching')
+                    el-button(slot='append' type='primary' icon='el-icon-search' size='large', :loading='isSearching', @click='search')
                         | 搜索
             .tabbed-table
                 el-tabs(v-model='activeTabName', @tab-click='handleTabClick' type='border-card')
                     el-tab-pane(label='Hive' name='hive')
                         el-table(:data="tableData", @row-click="handleRowClick", size="small", height="100%", :fit="true", :stripe="true")
-                            el-table-column(prop='id', label="ID", min-width="50")
+                            //- el-table-column(prop='id', label="ID", min-width="200")
                             el-table-column(prop='name', label="库名", min-width="100")
                             el-table-column(prop='descr', label="描述", min-width="100")
                             el-table-column(prop='tableCnt', label="表数量", min-width="50")
@@ -186,13 +186,13 @@
         flex-direction column
         flex-shrink 0
         width 100%
-        height 100px
+        height 150px
 
         h1
             color #303133
             font-size 18px
-            line-height 30px
-            height 30px
+            line-height 60px
+            height 60px
             margin 0 auto
             margin-bottom 5px
             text-align center
@@ -210,7 +210,7 @@
                 border-bottom-left-radius 0
 
     .tabbed-table
-        height calc(100% - 150px)
+        height calc(100% - 200px)
 
         /deep/ .el-tabs
             height 100%

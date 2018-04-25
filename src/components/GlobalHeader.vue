@@ -118,6 +118,9 @@
     },
     methods: {
       search() {
+        if (!this.input_of_search) {
+          return false;
+        }
         this.isSearching = true;
         this.$store.commit("SAVE_USER_INPUT_SEARCH", {
           seach_word: this.input_of_search.trim()
