@@ -52,12 +52,12 @@
                 .tags-title
                     | 标签 :
                 el-button.btn-add-tags(@click="openFormAddTags", type="primary" icon="el-icon-plus", size="mini", round='', plain='')
-                el-tag(v-for='(tag, idx) in list_of_table_tags', @close="handleDelTag(tag)", :key='tag', :closable='true', size='medium') {{tag | sevenCharsMax}}
+                el-tag(v-for='(tag, idx) in list_of_table_tags', @close="handleDelTag(tag)", :key='tag', :closable='true', :disable-transitions="true", size='medium') {{tag | sevenCharsMax}}
 
         .table
             el-tabs(v-model='activeTabName', @tab-click='handleTabClick' type='border-card')
                 el-tab-pane(label='基本信息查询' name='basic_info')
-                    el-table.table-basic-info(:data="tableBasicInfo", ref="table", @current-change="handleCurrentRowChangeBasicInfo", height="100%", :border='true', :stripe='true', size='mini')
+                    el-table.table-basic-info(:data="tableBasicInfo", ref="table", @current-change="handleCurrentRowChangeBasicInfo", :row-class-name="highlighted", :fit="true", height="100%", :border='true', :stripe='true', size='mini')
                         el-table-column(prop="fieldName", label="字段名称", :sort-method='sortFieldName', :sortable='true', :show-overflow-tooltip='true', min-width='150')
                         el-table-column(prop="isPrimarykey", label="是否主键", :sortable="true", align="center", width='100')
                             template(slot-scope="scope")
@@ -65,7 +65,7 @@
                                     | ✓
                                 span.x(v-else-if="checkOrX(scope.row.isPrimarykey) === '✕'")
                                     | ✕
-                                span.x(v-else)
+                                span(v-else)
                                     | 无
                         el-table-column(prop="fieldType", label="字段类型", :sortable="true", align="center", width='100')
                         el-table-column(prop="displayedFieldCreateTime", label="创建时间", width="210", :sort-method='sortCreateTime', :sortable='true')
@@ -78,7 +78,7 @@
                                     | ✓
                                 span.x(v-else-if="checkOrX(scope.row.isSensitiveInfo) === '✕'")
                                     | ✕
-                                span.x(v-else)
+                                span(v-else)
                                     | 无
                         el-table-column(prop="isAllowNull", label="允许空值", :sortable="true", align="center", width='100')
                             template(slot-scope="scope")
@@ -86,7 +86,7 @@
                                     | ✓
                                 span.x(v-else-if="checkOrX(scope.row.isAllowNull) === '✕'")
                                     | ✕
-                                span.x(v-else)
+                                span(v-else)
                                     | 无
 
 
@@ -362,6 +362,17 @@
         this.table_basic_info = [];
         this.authed_people = [];
       },
+      highlighted({ row, rowIndex }) {
+        if (this.high_light_field_id) {
+          if (row.id === this.high_light_field_id) {
+            return "high-lighted-field";
+          } else {
+            return "";
+          }
+        } else {
+          return "";
+        }
+      },
       fetchTable(table_id) {
         console.log(`fetchTable(${table_id})`);
         if (`${table_id}`.length === 0) {
@@ -375,6 +386,14 @@
             this.list_of_table_tags = this.table_metas.tags ? filter(this.table_metas.tags.split(","), length) : [];
             this.table_basic_info = res.fieldList.list;
             this.authed_people = res.peopleList;
+            console.log(`this.high_light_field_id: ${this.high_light_field_id}`);
+            if (this.high_light_field_id) {
+              let $table = document.querySelector(".table-basic-info");
+              console.log(`$table.scrollHeight: ${$table.scrollHeight} , $table.clientHeight: ${$table.clientHeight}`);
+              this.$nextTick(() => {
+                $table.scrollTop = 0;
+              });
+            }
           },
           err => {
             console.error(`err: `, err.errmsg);
@@ -587,7 +606,7 @@
         .tags-title
             padding-left .5em
             line-height 40px
-            width 85px
+            width 75px
             color #1d1d1b
             font-size 14px
             font-weight bold
@@ -641,17 +660,21 @@
 
     .table-basic-info
         overflow-y auto
+
         /deep/ .el-table__row:hover
             cursor pointer
 
-        /deep/ .el-table__body tr.el-table__row.current-row > td
+        /deep/ .el-table__body tr.el-table__row.high-lighted-field
             background-color #FF6600
-            border-right 1px solid #fff
-            .cell
-                color #fff
-                font-weight bold
-                span
+
+            & > td
+                background-color #FF6600
+                border-right 1px solid #fff
+                .cell
                     color #fff
+                    font-weight bold
+                    span
+                        color #fff
 
         /deep/ .el-table__row.current-row:hover
             cursor none

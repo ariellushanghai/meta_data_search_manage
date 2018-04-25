@@ -125,7 +125,7 @@
         }, err => {
           console.error(`err: `, err.errmsg);
           this.$notify({
-            message: `${err}`,
+            message: `${err.errmsg}`,
             type: "error",
             duration: 0
           });

@@ -1,6 +1,9 @@
 import network from "@/service/network";
 
 export default {
+  getUser() {
+    return network.get("/getUser", {});
+  },
   logOut(params) {
     return network.get("/logout", { params });
   },

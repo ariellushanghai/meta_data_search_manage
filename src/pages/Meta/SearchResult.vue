@@ -16,9 +16,9 @@
                         //- 搜索结果条目对应的详情挂载点: 库，表，字段详情
                         |
                         .result-details
-                            transition(name='fade', mode='out-in', :appear='true')
-                                keep-alive
-                                    component(v-bind:is='result_details_view', :db_id='selected_db_id', :table_id='selected_table_id', :high_light_field_id='selected_field_id', v-on:select_table='handleSelectTable')
+                            //- transition(name='fade', mode='out-in', :appear='true')
+                            keep-alive
+                                component(v-bind:is='result_details_view', :db_id='selected_db_id', :table_id='selected_table_id', :high_light_field_id='selected_field_id', v-on:select_table='handleSelectTable')
                     |
                     el-tab-pane(label='标签系统(暂无)' name='labelsys', :disabled='true') 标签系统
                     el-tab-pane(label='TimeLine(暂无)' name='timeline', :disabled='true') TimeLine
