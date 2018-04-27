@@ -12,6 +12,7 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {
       '/api': {
+        // target: 'http://10.14.224.180:8090/api',
         target: 'http://10.137.38.203:8090/metamanage',
         changeOrigin: true,
         pathRewrite: {
@@ -58,7 +59,7 @@ module.exports = {
     // Paths
     assetsRoot: path.resolve(__dirname, '../dist'),
     assetsSubDirectory: 'static',
-    assetsPublicPath: '/',
+    assetsPublicPath: './',
 
     /**
      * Source Maps

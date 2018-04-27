@@ -90,10 +90,10 @@
       this.$store.commit("SAVE_USER_INPUT_SEARCH", {
         seach_word: ""
       });
-      this.fetchIndexData();
       // 后台获取Hive DB列表，当空白搜索时直接跳去首条DB
       this.fetchHiveDBList().then(res => {
         this.hive_db = res;
+        this.fetchIndexData();
       }, err => {
         console.error(`后台获取Hive DB列表失败: `, err.errmsg);
       });

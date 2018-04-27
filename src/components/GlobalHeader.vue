@@ -116,6 +116,12 @@
       console.log(`beforeRouteUpdate: to: `, to.query.keyword, `, from: `, from.query.keyword);
       return next();
     },
+    created() {
+      return API.getUser().then(res => {
+        console.log(`getUser=>`, res);
+        this.$store.commit("SAVE_USER_INFO", res);
+      });
+    },
     methods: {
       search() {
         if (!this.input_of_search) {

@@ -24,8 +24,8 @@ const getters = {
 const mutations = {
   [types.SAVE_USER_INFO]: (state, data) => {
     console.log(`SAVE_USER_INFO: `, data);
-    state.user_name = data.userName;
-    state.menus = data.list;
+    state.user_name = String(data).replace(/"/g, "");
+    // state.menus = data.list;
   },
 
   [types.SAVE_USER_INPUT_SEARCH]: (state, data) => {

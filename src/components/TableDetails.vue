@@ -57,7 +57,7 @@
         .table
             el-tabs(v-model='activeTabName', @tab-click='handleTabClick' type='border-card')
                 el-tab-pane(label='基本信息查询' name='basic_info')
-                    el-table.table-basic-info(:data="tableBasicInfo", ref="table", @current-change="handleCurrentRowChangeBasicInfo", :row-class-name="highlighted", :fit="true", height="100%", :border='true', :stripe='true', size='mini')
+                    el-table.table-basic-info(:data="tableBasicInfo", ref="table", @row-click="handleRowClick", :row-class-name="highlighted", :fit="true", height="100%", :border='true', :stripe='true', size='mini')
                         el-table-column(prop="fieldName", label="字段名称", :sort-method='sortFieldName', :sortable='true', :show-overflow-tooltip='true', min-width='150')
                         el-table-column(prop="isPrimarykey", label="是否主键", :sortable="true", align="center", width='100')
                             template(slot-scope="scope")
@@ -119,8 +119,7 @@
     map,
     assign,
     pick,
-    isEmpty,
-    isNumber
+    isEmpty
   } from "lodash";
   import format from "date-fns/format";
 
@@ -159,20 +158,7 @@
         table_metas: {},
         list_of_table_tags: [],
         authed_people: [],
-        timeline_data: [
-          {
-            tag: "2018-01-12",
-            content: "hallo"
-          },
-          {
-            tag: "2018-01-13",
-            content: "world"
-          },
-          {
-            tag: "2018-01-14",
-            content: "=v ="
-          }
-        ],
+        timeline_data: [],
         activeTabName: "basic_info"
       };
     },
@@ -184,11 +170,11 @@
         // return this.table_basic_info;
         return sortBy(map(this.table_basic_info, row => {
           return assign(row, {
-            displayedFieldCreateTime: format(
+            displayedFieldCreateTime: row.fieldCreateTime ? format(
               new Date(row.fieldCreateTime),
               "YYYY[年]MMMD[日]Ah[点]mm[分]ss[秒]",
               { locale: zh_cn }
-            ),
+            ) : "无",
             displayedFieldUpdateTime: row.fieldUpdateTime ? format(
               new Date(row.fieldUpdateTime),
               "YYYY[年]MMMD[日]Ah[点]mm[分]ss[秒]",
@@ -238,34 +224,6 @@
             };
           }
         });
-
-        return map(
-          pick(this.table_metas, [
-            "tableName",
-            "dbName",
-            "descr",
-            "amount",
-            "tableCreateTime",
-            "effectiveTime",
-            "tableUpdateTime",
-            "dataOwner",
-            "devOwner",
-            "businessOwner"
-          ]),
-          (v, k) => {
-            if (k.toUpperCase().includes("TIME")) {
-              v = v ? format(
-                new Date(v),
-                "YYYY[/]MM[/]D hh[:]mm[:]ss",
-                { locale: zh_cn }
-              ) : "无";
-            }
-            return {
-              display_name: this.mapping[k],
-              value: v
-            };
-          }
-        );
       },
       authedPeople() {
         let reg = /\((.*?)\)/g; // 匹配圆括号中的人名
@@ -305,22 +263,36 @@
     watch: {
       table_id(new_id, old_id) {
         console.log(`table_id changed: new_id : `, new_id, `old_id:`, old_id);
-        if (!new_id) {
-          return this.clearUI();
-        }
-        if (Number(this.table_id) !== 0) {
-          return this.setUpUI();
-        }
+        this.clearUI();
+        return this.setUpUI();
       },
       high_light_field_id(new_id, old_id) {
         console.log(`high_light_field_id changed: new_id : `, new_id, `old_id:`, old_id);
-        return this.setUpUI();
+        return this.setUpUI(false);
       },
       activeTabName(tab_name) {
         console.log(`activeTabName changed: tab_name : `, tab_name);
         if (tab_name === "modified_log") {
+          const loading = this.$loading({
+            lock: true,
+            target: ".modified-log",
+            text: "加载中。。。",
+            spinner: "el-icon-loading",
+            background: "#fff"
+          });
           return API.getTableHistory({
             tableId: this.table_id
+          }).then(res => {
+            loading.close();
+            console.log(res);
+            this.timeline_data = map(res, d => {
+              return {
+                tag: d.CREATETIME,
+                content: d.DESCR
+              };
+            });
+            let h = document.querySelector(".modified-log").scrollHeight;
+            console.log(`h: ${h}`);
           });
         } else if (tab_name === "authed_people") {
           const loading = this.$loading({
@@ -345,22 +317,18 @@
       }
     },
     methods: {
-      setUpUI() {
+      setUpUI(should_update_data = true) {
         if (!this.table_id) {
           return false;
         }
-        this.fetchTable(this.table_id);
-        if (this.high_light_field_id) {
-          console.log(`this.high_light_field_id: ${this.high_light_field_id}`);
-          // let field = this.tableBasicInfo[0];
-          // this.$refs.table.setCurrentRow();
-          // this.$refs.table.setCurrentRow(field);
-        }
+        should_update_data && this.fetchTable(this.table_id);
       },
       clearUI() {
         this.table_metas = {};
         this.table_basic_info = [];
         this.authed_people = [];
+        this.dialog_edit_field_visible = false;
+        this.activeTabName = "basic_info";
       },
       highlighted({ row, rowIndex }) {
         if (this.high_light_field_id) {
@@ -382,6 +350,7 @@
         API.getTableById(table_id).then(
           res => {
             this.isLoadingTable = false;
+            this.dialog_edit_field_visible = false;
             this.table_metas = extend({}, res.tableInfo);
             this.list_of_table_tags = this.table_metas.tags ? filter(this.table_metas.tags.split(","), length) : [];
             this.table_basic_info = res.fieldList.list;
@@ -409,12 +378,8 @@
       handleTabClick(tab, event) {
         console.log(tab, event);
       },
-      handleCurrentRowChangeBasicInfo(row) {
+      handleRowClick(row) {
         console.log("点击单行() : ", JSON.stringify(row));
-        // this.$refs.table.setCurrentRow();
-        if (this.dialog_edit_field_visible) {
-          return false;
-        }
         this.form_edit_field = extend({}, row);
         return (this.dialog_edit_field_visible = true);
       },
@@ -433,7 +398,8 @@
           "isSensitiveInfo"
         ])).then(_ => {
           this.isSubmittingFieldForm = false;
-          return this.handleCancelUpdateField();
+          this.handleCancelUpdateField();
+          return this.setUpUI();
         }, err => {
           this.isSubmittingFieldForm = false;
           console.error(`err: `, err.errmsg);
@@ -691,6 +657,12 @@
         height 100%
         overflow-x hidden
         overflow-y auto
+
+    .modified-log .line-container
+        width 100%
+
+        & /deep/ .item-tag
+            width auto
 
     .authed-person
         display flex
