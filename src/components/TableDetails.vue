@@ -167,7 +167,7 @@
         list_of_table_tags: [],
         authed_people: [],
         pageNum: 1,// authed_people当前页
-        pageSize: 10,// authed_people请求分页数
+        pageSize: 1,// authed_people请求分页数
         total: 0,// authed_people总数
         timeline_data: [],
         activeTabName: "basic_info"
@@ -320,11 +320,14 @@
         should_update_data && this.fetchTable(this.table_id);
       },
       clearUI() {
+        console.log(`clearUI()`);
         this.table_metas = {};
         this.table_basic_info = [];
         this.authed_people = [];
         this.dialog_edit_field_visible = false;
         this.activeTabName = "basic_info";
+        this.pageNum = 1;
+        this.total = 0;
       },
       highlighted({ row, rowIndex }) {
         if (this.high_light_field_id) {
