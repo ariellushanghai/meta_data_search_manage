@@ -89,19 +89,27 @@
                                 span(v-else)
                                     | 无
 
-
-                el-tab-pane(label='人员权限查询' name='authed_people', :disabled="isLoadingTable")
+                |
+                el-tab-pane.authed-people-pane(label='人员权限查询' name='authed_people', :disabled="isLoadingTable")
                     .authed-people
-                        .authed-person(v-if="authedPeople.length > 0", v-for='person in authedPeople', :key='person.operatorId')
-                            img(:src="icon_person")
-                            .names
-                                div(v-if='person.chinese_name') {{person.um_name}}
-                                div(v-else) {{person.operatorName}}
-                                div(v-if='person.chinese_name') {{person.chinese_name}}
-
+                        el-popover(v-if="authedPeople.length > 0", v-for='person in authedPeople', :key='person.operatorId', trigger='hover', width="500")
+                            el-table(:data="person.permissions")
+                                el-table-column(width="200" property="aciton" label="操作名")
+                                el-table-column(width="300" property="expired" label="失效日期")
+                            .authed-person(slot="reference")
+                                img(:src="icon_person")
+                                .names
+                                    div(v-if='person.chinese_name') {{person.um_name}}
+                                    div(v-else) {{person.operatorName}}
+                                    div(v-if='person.chinese_name') {{person.chinese_name}}
+                    |
+                    .pagination
+                        el-pagination(:disabled="authedPeople.length === 0" , @size-change="handlePageSizeChange", @current-change="handleCurrentPageChange", :current-page.sync="pageNum", :total="total", :page-size="pageSize", layout="total, prev, pager, next", :background="true", :small="true")
+                |
                 el-tab-pane(label='变更历史查询' name='modified_log', :disabled="isLoadingTable")
                     .modified-log
                         light-timeline(:items="timeline_data")
+                |
                 el-tab-pane(label='血缘关系查询(暂无)' name='relations', :disabled="true") 血缘关系查询
 
 
@@ -158,6 +166,9 @@
         table_metas: {},
         list_of_table_tags: [],
         authed_people: [],
+        pageNum: 1,// authed_people当前页
+        pageSize: 10,// authed_people请求分页数
+        total: 0,// authed_people总数
         timeline_data: [],
         activeTabName: "basic_info"
       };
@@ -295,22 +306,7 @@
             console.log(`h: ${h}`);
           });
         } else if (tab_name === "authed_people") {
-          const loading = this.$loading({
-            lock: true,
-            target: ".authed-people",
-            text: "加载中，时间较长。。。",
-            spinner: "el-icon-loading",
-            background: "#fff"
-          });
-          return API.getTablePermissionList({
-            tableName: this.table_metas.tableName,
-            dbName: this.table_metas.dbName
-          }).then(
-            res => {
-              loading.close();
-              console.log(res);
-              this.authed_people = res;
-            });
+          return this.fetchAuthPeople();
         } else {
           return console.error(`tab_name: ${tab_name}`);
         }
@@ -374,6 +370,27 @@
             this.isLoadingTable = false;
           }
         );
+      },
+      fetchAuthPeople() {
+        const loading = this.$loading({
+          lock: true,
+          target: ".authed-people-pane",
+          text: "加载中。。。",
+          spinner: "el-icon-loading",
+          background: "#fff"
+        });
+        return API.getTablePermissionList({
+          tableName: this.table_metas.tableName,
+          dbName: this.table_metas.dbName,
+          pageNum: Number(this.pageNum),
+          pageSize: Number(this.pageSize)
+        }).then(
+          res => {
+            loading.close();
+            console.log(res);
+            this.authed_people = res.data;
+            this.total = Number(res.total);
+          });
       },
       handleTabClick(tab, event) {
         console.log(tab, event);
@@ -473,6 +490,14 @@
       },
       sortUpdateTime(a: number, b: number): number {
         return Number(a.fieldUpdateTime) - Number(b.fieldUpdateTime);
+      },
+      handleCurrentPageChange(val) {
+        this.pageNum = Number(val);
+        return this.fetchAuthPeople();
+      },
+      handlePageSizeChange(val) {
+        this.pageSize = Number(val);
+        return this.fetchAuthPeople();
       }
     }
   };
@@ -658,44 +683,63 @@
         overflow-x hidden
         overflow-y auto
 
+    .authed-people
+        height calc(100% - 50px)
+
     .modified-log .line-container
         width 100%
 
         & /deep/ .item-tag
             width auto
 
-    .authed-person
-        display flex
-        justify-content space-between
-        width 15%
-        height 60px
-        font-size 11px
-        padding .5em
-        max-width 250px
-        min-width 180px
-        margin .5em
-        border-radius 4px
-        border 1px solid #ebeef5
-        overflow hidden
-        box-shadow 0 1px 6px 0 rgba(0, 0, 0, .1)
+    .authed-people-pane
+        position relative
+        flex-direction column
 
-        img
-            align-self center
-            width 25px
-            height 25px
-
-        .names
+        .pagination
             display flex
-            flex-direction column
-            justify-content space-around
-            width calc(95% - 25px)
-            > div {
-                overflow hidden
-                text-overflow ellipsis
-                white-space nowrap
-                word-break break-all
-                vertical-align middle
-            }
+            position relative
+            justify-content center
+            align-items center
+            height 50px
 
+            .el-pagination
+                display flex
+                justify-content center
+                align-items center
+                padding 5px
+                padding-bottom 0
+
+        .authed-person
+            display flex
+            justify-content space-between
+            width 15%
+            height 60px
+            font-size 11px
+            padding .5em
+            max-width 250px
+            min-width 180px
+            margin .5em
+            border-radius 4px
+            border 1px solid #ebeef5
+            overflow hidden
+            box-shadow 0 1px 6px 0 rgba(0, 0, 0, .1)
+
+            img
+                align-self center
+                width 25px
+                height 25px
+
+            .names
+                display flex
+                flex-direction column
+                justify-content space-around
+                width calc(95% - 25px)
+                > div
+                    overflow hidden
+                    text-overflow ellipsis
+                    white-space nowrap
+                    word-break break-all
+                    vertical-align middle
 
 </style>

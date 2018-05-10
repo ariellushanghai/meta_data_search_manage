@@ -1,7 +1,7 @@
 <template lang="pug">
     .db-table-tree-menu
         .dbs
-            el-table(ref="hiveList", :data='hives.list', row-key='id', @current-change='handleSelectHive', :empty-text='hives.placeholder_of_empty_list', v-loading='hives.is_loading', :fit='true', :highlight-current-row='true', :show-header='false', size='mini')
+            el-table(ref="hiveList", :data='hives.list', row-key='id', @current-change='handleSelectHive', :empty-text='hives.placeholder_of_empty_list', v-loading='hives.is_loading', height='100%', :fit='true', :highlight-current-row='true', :show-header='false', size='mini')
                 el-table-column(:show-overflow-tooltip='true')
                     template(slot-scope='scope')
                         img(:src='hives.icon')
@@ -13,7 +13,7 @@
                     img(slot='prefix')
             |
             .list
-                el-table(:data='tableList', @current-change='handleSelectTable', :empty-text='tables.placeholder_of_empty_list', v-loading='tables.is_loading', :fit='true', :highlight-current-row='true', :show-header='false', size='mini')
+                el-table(:data='tableList', @current-change='handleSelectTable', :empty-text='tables.placeholder_of_empty_list', v-loading='tables.is_loading', height='100%', :fit='true', :highlight-current-row='true', :show-header='false', size='mini')
                     el-table-column(:show-overflow-tooltip='true')
                         template(slot-scope='scope')
                             img(:src='tables.icon')
@@ -208,6 +208,7 @@
 
         .text-filter
             height 30px
+            padding 0 10px
 
         .list
             height calc(100% - 30px)

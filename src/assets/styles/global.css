@@ -26,7 +26,7 @@ textarea {
     -moz-osx-font-smoothing: grayscale;
 }
 
-input::selection, .cell *::selection, .cell::selection, div::selection, span::selection {
+input::selection, input.el-input__inner::selection, .cell *::selection, .cell::selection, div::selection, span::selection {
     color: #fff;
     background-color: #FF6600;
     font-weight: bold;
