@@ -167,7 +167,7 @@
         list_of_table_tags: [],
         authed_people: [],
         pageNum: 1,// authed_people当前页
-        pageSize: 1,// authed_people请求分页数
+        pageSize: 20,// authed_people请求分页数
         total: 0,// authed_people总数
         timeline_data: [],
         activeTabName: "basic_info"
