@@ -12,8 +12,8 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {
       '/api': {
-        // target: 'http://10.14.224.180:8090/api',
-        target: 'http://10.137.38.203:8090/metamanage',
+        target: 'http://10.14.224.180:8090/api', // TEST SERVER
+        // target: 'http://10.137.38.203:8090/metamanage',
         changeOrigin: true,
         pathRewrite: {
           '^/api': ''

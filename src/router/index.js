@@ -1,6 +1,8 @@
 import Router from "vue-router";
 import store from "@/store/";
 
+
+const NotFound = r => require(["@/pages/NotFound"], r);
 // 元数据管理模块
 const Meta = r => require(["@/pages/Meta/Meta.vue"], r); // 容器
 const MetaIndex = r => require(["@/pages/Meta/Index.vue"], r); // 未搜索时的首页
@@ -46,6 +48,10 @@ const router = new Router({
       name: "assist",
       path: "/assist",
       component: Assist
+    },
+    {
+      path: "*",
+      component: NotFound
     }
   ]
 });

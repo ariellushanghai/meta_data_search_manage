@@ -5,7 +5,7 @@
                 el-tabs(v-model='activeTabName', @tab-click='handleTabClick', type='border-card')
                     el-tab-pane(label='Hive', name='hive')
                         .hives-and-tables
-                            db-table-tree-menu(:db_id='currentDbId', v-on:select_table='handleSelectTable')
+                            db-table-tree-menu(:db_id='currentDbId', v-on:select_hive='handleSelectHive', v-on:select_table='handleSelectTable')
                         |
                         .selected-table
                             |
@@ -13,7 +13,7 @@
                                 table-details(:table_id='selected_table_id')
                             |
                             transition(v-else, name="fade")
-                                .empty-place-holder()
+                                .empty-place-holder
                                     span ←请选择您所需要查看的数据表
 
                     |
@@ -24,15 +24,12 @@
 
 <script>
   // @flow
-  import API from "@/service/api";
   import DbTableTreeMenu from "@/components/DbTableTreeMenu.vue";
   import TableDetails from "@/components/TableDetails.vue";
   import ElContainer from "element-ui/packages/container/src/main";
   import ElMain from "element-ui/packages/main/src/main";
   import { map, assign } from "lodash";
-  import format from "date-fns/format";
 
-  const zh_cn = require("date-fns/locale/zh-CN");
 
   export default {
     components: {
@@ -47,6 +44,7 @@
     },
     data() {
       return {
+        selected_hive_id: null,
         selected_table_id: null,
         activeTabName: "hive"
       };
@@ -65,6 +63,11 @@
       handleSelectTable(table_id) {
         console.log(`handleSelectTable(${table_id})`);
         return this.selected_table_id = table_id;
+      },
+      handleSelectHive(hive_id) {
+        console.log(`handleSelectHive(${hive_id})`);
+        return this.$router.push({ name: "blanksearchresult", params: { db: hive_id } });
+        // return this.selected_hive_id = hive_id;
       },
       handleTabClick(tab, event) {
         console.log(tab, event);
@@ -112,6 +115,7 @@
 
         .empty-place-holder
             display flex
+            color #C0C4CC
             width 100%
             height 100%
             text-align center

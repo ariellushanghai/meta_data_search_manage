@@ -104,7 +104,7 @@
         this.flag_show_search_input = (to.name === "meta") ? false : true;
         //
         if (to.query.keyword && (to.query.keyword !== from.query.keyword)) {
-          console.log(`to: `, to, `, from: `, from);
+          // console.log(`to: `, to, `, from: `, from);
           this.$store.commit("SAVE_USER_INPUT_SEARCH", {
             seach_word: to.query.keyword
           });
@@ -113,12 +113,12 @@
       }
     },
     beforeRouteUpdate(to, from, next) {
-      console.log(`beforeRouteUpdate: to: `, to.query.keyword, `, from: `, from.query.keyword);
+      // console.log(`beforeRouteUpdate: to: `, to.query.keyword, `, from: `, from.query.keyword);
       return next();
     },
     created() {
       return API.getUser().then(res => {
-        console.log(`getUser=>`, res);
+        // console.log(`getUser=>`, res);
         this.$store.commit("SAVE_USER_INFO", res);
       });
     },
@@ -141,7 +141,7 @@
       },
       logOut() {
         return API.logOut().then(res => {
-          console.log(`logout success!!`, res);
+          // console.log(`logout success!!`, res);
           this.$store.commit("LOGOUT");
           return location.replace(`${res.url}?url=${encodeURIComponent(location.href)}`);
         });
@@ -212,8 +212,10 @@
             .logo
                 width 133.33px
 
-        .narrow.logo
-            width 90.96px
+        .narrow
+            background-color #EA5505
+            .logo
+                width 75px
 
         .title, .title-text
             display flex
@@ -235,6 +237,7 @@
             display flex
             align-items center
             justify-content center
+            padding-right 20px
 
         .icons-of-modules
             width 20px
@@ -253,7 +256,7 @@
         display flex
         justify-content center
         align-items center
-        padding 0 20px
+        padding 0 12px
 
         /deep/ .el-input
             width 400px
