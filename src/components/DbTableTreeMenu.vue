@@ -1,23 +1,25 @@
 <template lang="pug">
     .db-table-tree-menu
         .dbs
-            el-table(id='table_dbs', ref="hiveList", :data='hives.list', row-key='id', @current-change='handleSelectHive', :empty-text='hives.placeholder_of_empty_list', v-loading='hives.is_loading', height='100%', :fit='true', :highlight-current-row='true', :show-header='false', size='mini')
+            el-table#table_dbs(ref="hiveList", :data='hives.list', row-key='id', @current-change='handleSelectHive', :empty-text='hives.placeholder_of_empty_list', v-loading='hives.is_loading', :row-class-name='setHiveRowClassName', height='100%', :fit='true', :highlight-current-row='true', :show-header='false', size='mini')
                 el-table-column(:show-overflow-tooltip='true')
                     template(slot-scope='scope')
                         img(:src='hives.icon', title='库')
                         span(style='font-size: 14px;') {{scope.row.name}}
         |
         .tables
-            .text-filter
-                div(v-show="tables.list.length !== 0")
-                    span 共
-                    span.num {{tables.list.length}}
-                    span 张表，过滤：
-                el-input(placeholder='请输入表名', v-model='tables.name_filter', :clearable='true', :fit='true', size='mini')
-                    img(slot='prefix')
-            |
+            .filter-bar
+                .blur-mask
+                .text-filter
+                    div(v-show="tables.list.length !== 0")
+                        span 共
+                        span.num {{tables.list.length}}
+                        span 张表，过滤：
+                    el-input(placeholder='请输入表名', v-model='tables.name_filter', :clearable='true', :fit='true', size='mini')
+                        img(slot='prefix')
+                |
             .list
-                el-table(id='table_tables', :data='tableList', @current-change='handleSelectTable', :empty-text='tables.placeholder_of_empty_list', v-loading='tables.is_loading', height='100%', :fit='true', :highlight-current-row='true', :show-header='false', size='mini')
+                el-table#table_tables(:data='tableList', @current-change='handleSelectTable', :empty-text='tables.placeholder_of_empty_list', v-loading='tables.is_loading', height='100%', :fit='true', :highlight-current-row='true', :show-header='false', size='mini')
                     el-table-column(:show-overflow-tooltip='true')
                         template(slot-scope='scope')
                             img(:src='tables.icon', title='表')
@@ -80,7 +82,6 @@
         if (this.db_id && `${this.db_id}`.length > 0) {
           console.log(`DOM operation`);
           this.$refs.hiveList.setCurrentRow(this.hives.selected);
-
         }
       },
       getHiveList() {
@@ -104,6 +105,7 @@
       },
       handleSelectHive(val, oldVal) {
         console.log(`handleSelectHive() val: => `, val, `, oldVal: => `, oldVal);
+
         if (this.tables.is_loading || isEmpty(val) || `${val.id}`.length === 0) {
           return false;
         }
@@ -121,12 +123,28 @@
         // return this.getHiveById(val.id);
       },
       watchHandlerSelectHive(db_id) {
+        console.log(`watchHandlerSelectHive(${db_id})`);
+        db_id && (`${db_id}`.length > 0) && this.scrollToSelectedHive(db_id);
         // this.hives.selected = val;
         this.tables.name_filter = "";
         return this.getHiveById(db_id);
       },
+      setHiveRowClassName({ row }) {
+        // console.log(`setHiveRowClassName(row: `, row, `)`);
+        return `hive-row-id-${row.id}`;
+      },
+      scrollToSelectedHive(db_id) {
+        console.log(document.querySelector(`.hive-row-id-${db_id}`));
+        let $table = document.querySelector("#table_dbs .el-table__body-wrapper");
+        let $selected_hive = document.querySelector(`.hive-row-id-${db_id}`);
+        if ($table && $selected_hive) {
+          return this.$nextTick(() => {
+            $table.scrollTop = $selected_hive.offsetTop - ($table.clientHeight / 2);
+          });
+        }
+      },
       handleSelectTable(val) {
-        console.log(`select_table() val: => `, val);
+        console.log(`handleSelectTable() val: => `, val);
         if (this.tables.is_loading) {
           return false;
         }
@@ -226,27 +244,51 @@
         flex-grow 1
         width auto
         height 100%
+        position relative
 
-        .text-filter
-            color #909399
+        .filter-bar
+            position absolute
+            top 0
+            left 0
+            width calc(100% - 5px)
             height 30px
-            padding 0 10px
-            display flex
+            z-index 10
 
-            > div
-                font-size 13px
-                line-height 30px
-                max-width 55%
-                overflow hidden
+            .blur-mask
+                position absolute
+                top 0
+                left 0
+                width 100%
+                height 100%
+                filter blur(10px)
+                z-index -1
 
-                span.num
-                    color #f60
+            .text-filter
+                background-color rgba(255, 255, 255, 0.95)
+                color #909399
+                height 30px
+                padding 0 10px
+                display flex
 
-            > .el-input
-                width auto
+                > div
+                    font-size 13px
+                    line-height 30px
+                    max-width 55%
+                    overflow hidden
+
+                    span.num
+                        color #f60
+
+                > .el-input
+                    width auto
 
         .list
-            height calc(100% - 30px)
-
+            // height calc(100% - 30px)
+            height 100%
+            position absolute
+            left 0
+            top 0
+            width 100%
+            height 100%
 
 </style>

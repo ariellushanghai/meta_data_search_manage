@@ -58,20 +58,9 @@
             el-tabs(v-model='activeTabName', @tab-click='handleTabClick' type='border-card')
                 el-tab-pane(label='基本信息查询' name='basic_info')
                     el-table.table-basic-info(:data="tableBasicInfo", ref="table", @row-click="handleRowClick", :row-class-name="highlighted", :fit="true", height="100%", :border='true', :stripe='true', size='mini')
-                        el-table-column(prop="fieldName", label="字段名称", :sort-method='sortFieldName', :sortable='true', :show-overflow-tooltip='true', min-width='150')
-                        el-table-column(prop="isPrimarykey", label="是否主键", :sortable="true", align="center", width='100')
-                            template(slot-scope="scope")
-                                span.check(v-if="checkOrX(scope.row.isPrimarykey) === '✓'")
-                                    | ✓
-                                span.x(v-else-if="checkOrX(scope.row.isPrimarykey) === '✕'")
-                                    | ✕
-                                span(v-else)
-                                    | 无
-                        el-table-column(prop="fieldType", label="字段类型", :sortable="true", align="center", width='100')
-                        el-table-column(prop="displayedFieldCreateTime", label="创建时间", width="210", :sort-method='sortCreateTime', :sortable='true')
-                        el-table-column(prop="displayedFieldUpdateTime", label="更新时间", width="210", :sort-method='sortUpdateTime', :sortable='true')
+                        el-table-column(prop="fieldName", label="字段名称", :sort-method='sortFieldName', :sortable='true', :show-overflow-tooltip='true', :fixed='true', class-name="mono-font", min-width='150')
+                        el-table-column(prop="fieldType", label="字段类型", :sortable="true", align="center", class-name="mono-font", width='100')
                         el-table-column(prop="descr", label="字段描述", min-width='150', :show-overflow-tooltip='true')
-                        el-table-column(prop="statisticsCaliber", label="统计口径", width="100", :sortable="true")
                         el-table-column(prop="isSensitiveInfo", label="敏感信息", :sortable="true", align="center", width='100')
                             template(slot-scope="scope")
                                 span.check(v-if="checkOrX(scope.row.isSensitiveInfo) === '✓'")
@@ -80,6 +69,7 @@
                                     | ✕
                                 span(v-else)
                                     | 无
+                        |
                         el-table-column(prop="isAllowNull", label="允许空值", :sortable="true", align="center", width='100')
                             template(slot-scope="scope")
                                 span.check(v-if="checkOrX(scope.row.isAllowNull) === '✓'")
@@ -88,6 +78,20 @@
                                     | ✕
                                 span(v-else)
                                     | 无
+                        |
+                        el-table-column(prop="statisticsCaliber", label="统计口径", width="100", :sortable="true")
+                        el-table-column(prop="isPrimarykey", label="是否主键", :sortable="true", align="center", width='100')
+                            template(slot-scope="scope")
+                                span.check(v-if="checkOrX(scope.row.isPrimarykey) === '✓'")
+                                    | ✓
+                                span.x(v-else-if="checkOrX(scope.row.isPrimarykey) === '✕'")
+                                    | ✕
+                                span(v-else)
+                                    | 无
+                        |
+                        el-table-column(prop="displayedFieldCreateTime", label="创建时间", width="220", :sort-method='sortCreateTime', :sortable='true')
+                        |
+                        el-table-column(prop="displayedFieldUpdateTime", label="更新时间", width="220", :sort-method='sortUpdateTime', :sortable='true')
 
                 |
                 el-tab-pane.authed-people-pane(label='人员权限查询' name='authed_people', :disabled="isLoadingTable")
@@ -641,6 +645,9 @@
                     height auto
                     vertical-align top
                     margin-right .5em
+
+    .el-table /deep/ .mono-font
+        font-family mono
 
     .dbs
         width 40%
