@@ -21,6 +21,7 @@
                                 component(v-bind:is='result_details_view', :db_id='selected_db_id', :table_id='selected_table_id', :high_light_field_id='selected_field_id', v-on:select_table='handleSelectTable')
                     |
                     el-tab-pane(label='标签系统(暂无)' name='labelsys', :disabled='true') 标签系统
+
                     el-tab-pane(label='TimeLine(暂无)' name='timeline', :disabled='true') TimeLine
 </template>
 

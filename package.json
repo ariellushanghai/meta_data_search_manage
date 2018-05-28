@@ -31,7 +31,7 @@
   },
   "devDependencies": {
     "ajv": "^6.5.0",
-    "autoprefixer": "^8.5.0",
+    "autoprefixer": "^8.5.1",
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.3",
     "babel-eslint": "^8.2.3",
@@ -74,6 +74,7 @@
     "postcss-import": "^11.1.0",
     "postcss-loader": "^2.1.5",
     "postcss-url": "^7.3.2",
+    "preload-webpack-plugin": "^2.3.0",
     "prettier": "1.11.1",
     "pug": "^2.0.3",
     "pug-filters": "^3.1.0",

@@ -15,7 +15,7 @@
                         span 共
                         span.num {{tables.list.length}}
                         span 张表，过滤：
-                    el-input(placeholder='请输入表名', v-model='tables.name_filter', :clearable='true', :fit='true', size='mini')
+                    el-input(placeholder='请输入表名', v-model.trim='tables.name_filter', :clearable='true', :fit='true', size='mini')
                         img(slot='prefix')
                 |
             .list
@@ -56,7 +56,7 @@
     },
     computed: {
       tableList() {
-        return this.tables.list.filter((table) => table.tableName.toLowerCase().includes(String(this.tables.name_filter).toLowerCase()));
+        return this.tables.list.filter(table => table.tableName.toLowerCase().includes(String(this.tables.name_filter).toLowerCase()));
       }
     },
     watch: {
