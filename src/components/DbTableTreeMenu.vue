@@ -244,51 +244,31 @@
         flex-grow 1
         width auto
         height 100%
-        position relative
 
-        .filter-bar
-            position absolute
-            top 0
-            left 0
-            width calc(100% - 5px)
+        .text-filter
+            background-color rgba(255, 255, 255, 0.95)
+            color #909399
             height 30px
-            z-index 10
+            padding 0 10px
+            display flex
 
-            .blur-mask
-                position absolute
-                top 0
-                left 0
-                width 100%
-                height 100%
-                filter blur(10px)
-                z-index -1
+            /deep/ .el-input__inner
+                padding-left 10px
+                padding-right 10px
 
-            .text-filter
-                background-color rgba(255, 255, 255, 0.95)
-                color #909399
-                height 30px
-                padding 0 10px
-                display flex
+            > div
+                font-size 13px
+                line-height 30px
+                max-width 55%
+                overflow hidden
 
-                > div
-                    font-size 13px
-                    line-height 30px
-                    max-width 55%
-                    overflow hidden
+                span.num
+                    color #f60
 
-                    span.num
-                        color #f60
-
-                > .el-input
-                    width auto
+            > .el-input
+                width auto
 
         .list
-            // height calc(100% - 30px)
-            height 100%
-            position absolute
-            left 0
-            top 0
-            width 100%
-            height 100%
+            height calc(100% - 30px)
 
 </style>
