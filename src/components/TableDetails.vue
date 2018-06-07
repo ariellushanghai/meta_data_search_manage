@@ -373,15 +373,15 @@
           },
           err => {
             console.error(`err: `, err.errmsg);
+            this.isLoadingTable = false;
+            if (Number(err.errcode) === 1000) {
+              return this.hasNoPermission = true;
+            }
             this.$notify({
               message: `${err.errmsg}`,
               type: "error",
               duration: 0
             });
-            if (Number(err.errcode) === 1000) {
-              this.hasNoPermission = true;
-            }
-            this.isLoadingTable = false;
           }
         );
       },
