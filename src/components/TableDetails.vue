@@ -1,5 +1,7 @@
 <template lang="pug">
     .table-details-container(v-loading="isLoadingTable", element-loading-text="加载表格数据。。。", element-loading-spinner="el-icon-loading", element-loading-background="#fff")
+        .has-no-permission-mask(v-if='hasNoPermission')
+            span 您没有这张表元数据的查询权限
         // 编辑字段弹出框
         el-dialog.dialog-edit-field(title='字段详情', :visible.sync='dialog_edit_field_visible', width='50%', top='50px', append-to-body='', modal-append-to-body='', lock-scroll='', :show-close='true', :close-on-click-modal='false', :close-on-press-escape='false', close='handleCancelUpdateField')
             el-form(:model='form_edit_field', :disabled='isSubmittingFieldForm', label-width="100px", size='small', class="form-edit-field")
@@ -94,7 +96,7 @@
                         el-table-column(prop="displayedFieldUpdateTime", label="更新时间", width="220", :sort-method='sortUpdateTime', :sortable='true')
 
                 |
-                el-tab-pane.authed-people-pane(label='人员权限查询' name='authed_people', :disabled="isLoadingTable")
+                el-tab-pane.authed-people-pane(label='人员权限查询' name='authed_people', :disabled="isLoadingTable || hasNoPermission")
                     .authed-people
                         el-popover(v-if="authedPeople.length > 0", v-for='person in authedPeople', :key='person.operatorId', trigger='hover', width="500")
                             el-table(:data="person.permissions")
@@ -110,7 +112,7 @@
                     .pagination
                         el-pagination(:disabled="authedPeople.length === 0" , @size-change="handlePageSizeChange", @current-change="handleCurrentPageChange", :current-page.sync="pageNum", :total="total", :page-size="pageSize", layout="total, prev, pager, next", :background="true", :small="true")
                 |
-                el-tab-pane(label='变更历史查询' name='modified_log', :disabled="isLoadingTable")
+                el-tab-pane(label='变更历史查询' name='modified_log', :disabled="isLoadingTable || hasNoPermission")
                     .modified-log
                         light-timeline(:items="timeline_data")
                 |
@@ -158,6 +160,7 @@
           businessOwner: "口径归属"
         },
         isLoadingTable: false,
+        hasNoPermission: false,
         dialog_edit_field_visible: false,
         dialog_edit_tags_visible: false,
         isSubmittingFieldForm: false,
@@ -350,6 +353,7 @@
           return false;
         }
         this.isLoadingTable = true;
+        this.hasNoPermission = false;
         API.getTableById(table_id).then(
           res => {
             this.isLoadingTable = false;
@@ -374,6 +378,9 @@
               type: "error",
               duration: 0
             });
+            if (Number(err.errcode) === 1000) {
+              this.hasNoPermission = true;
+            }
             this.isLoadingTable = false;
           }
         );
@@ -526,12 +533,27 @@
         color #F56C6C
 
     .table-details-container
+        position relative
         display flex
         flex-direction column
         width 100%
         height 100%
-        /*overflow hidden*/
         padding 0
+
+        .has-no-permission-mask
+            z-index 100
+            background white
+            position absolute
+            display flex
+            top 0
+            left 0
+            width 100%
+            height 100%
+            color #C0C4CC
+            text-align center
+            justify-content center
+            align-items center
+
         /deep/ .el-tabs__item
             user-select none
 
